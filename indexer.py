@@ -1,4 +1,5 @@
 from nltk.tokenize import word_tokenize
+from nltk.stem.porter import *
 from bs4 import BeautifulSoup
 import nltk
 import re
@@ -27,7 +28,7 @@ if __name__ == "__main__":
     # Index id for splitting
     iid = 1
     # How many files to traverse before splitting that index
-    splitter = 100
+    splitter = 10000
     # Is this line below needed? - Tim
     nltk.download('punkt')
     # Create the indexes folder if not exists
@@ -44,7 +45,9 @@ if __name__ == "__main__":
             test_file_contents = data["content"]
             raw_text = BeautifulSoup(test_file_contents, 'html.parser').get_text()
             tokens = word_tokenize(raw_text)
-            clean_tokens = [t for t in tokens if re.match(r'[^\W\d]*$', t)]
+            # Experimental Porter Stemmer
+            ps = PorterStemmer()
+            clean_tokens = [ps.stem(t) for t in tokens if re.match(r'[^\W\d]*$', t)]
             # Update the inverted index with the tokens
             for t in clean_tokens:
                 # Can probably use defaultdict to skip conditional checks?
@@ -70,7 +73,7 @@ if __name__ == "__main__":
                 index.clear()
             # Increment file id after current file is done
             fid += 1
-    # The last batch might not reach 100 files, so if the index is not empty, dump another file
+    # The last batch might not reach (splitter #) files, so if the index is not empty, dump another file
     if len(index) != 0:
         with open("indexes/index" + str(iid) + ".json", "w") as save_file:
             json.dump(index, save_file)
