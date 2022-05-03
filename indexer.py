@@ -29,21 +29,20 @@ if __name__ == "__main__":
     iid = 1
     # How many files to traverse before splitting that index
     splitter = 10000
-    # Is this line below needed? - Tim
-    nltk.download('punkt')
     # Create the indexes folder if not exists
     if not os.path.exists('indexes'):
         os.makedirs('indexes')
     # Remove all contents in the indexes folder for each fresh run
     for f in os.listdir('indexes'):
         os.remove(os.path.join('indexes', f))
-    # CHANGE os.walk later as it does not guarantee order (but might not matter for part 1)!
+    
     for root, dirs, files in os.walk(docPath):
+        dirs.sort() #sort dirs so they are in the same order every time
         for page in files:
             with open(os.path.join(root, page)) as json_file:
                 data = json.load(json_file)
             test_file_contents = data["content"]
-            raw_text = BeautifulSoup(test_file_contents, 'html.parser').get_text()
+            raw_text = BeautifulSoup(test_file_contents, 'lxml').get_text()
             tokens = word_tokenize(raw_text)
             # Experimental Porter Stemmer
             ps = PorterStemmer()
@@ -69,7 +68,7 @@ if __name__ == "__main__":
                     json.dump(index, save_file)
                 # Increment index id after dumping one index file
                 iid += 1
-                # Clearing the dictionary should certainly clear the memory, right?
+                # Clearing the dictionary should certainly clear the memory, right? y
                 index.clear()
             # Increment file id after current file is done
             fid += 1
