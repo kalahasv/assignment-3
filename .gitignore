@@ -1,2 +1,6 @@
 # DEV folder should also be ignored tbh
 *.json
+DEV/
+DEV2/
+indexes/*.json
+!indexes/
