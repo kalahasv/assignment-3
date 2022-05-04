@@ -68,7 +68,7 @@ if __name__ == "__main__":
                             "frequency": 1
                         }
                 # Split so memory doesn't deplete fully
-                slip_num = fid % splitter 
+              
                 if fid % splitter == 0:
                     if IS_DEBUG:
                         print("Splitting index", iid, "at fid", fid)
