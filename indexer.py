@@ -76,3 +76,5 @@ if __name__ == "__main__":
     if len(index) != 0:
         with open("indexes/index" + str(iid) + ".json", "w") as save_file:
             json.dump(index, save_file)
+            
+    # report
