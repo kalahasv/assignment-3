@@ -68,7 +68,7 @@ if __name__ == "__main__":
                             "frequency": 1
                         }
                 # Split so memory doesn't deplete fully
-                slip_num = fid % splitter
+                slip_num = fid % splitter 
                 if fid % splitter == 0:
                     if IS_DEBUG:
                         print("Splitting index", iid, "at fid", fid)
@@ -84,3 +84,5 @@ if __name__ == "__main__":
     if len(index) != 0:
         with open("indexes/index" + str(iid) + ".json", "w") as save_file:
             json.dump(index, save_file)
+            
+    # report
