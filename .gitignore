@@ -4,3 +4,5 @@ DEV/
 DEV2/
 indexes/*.json
 !indexes/
+.DS_Store
+**/.DS_Store
