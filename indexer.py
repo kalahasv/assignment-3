@@ -85,4 +85,15 @@ if __name__ == "__main__":
         with open("indexes/index" + str(iid) + ".json", "w") as save_file:
             json.dump(index, save_file)
             
-    # report
+    # report - Ju
+    # number of documents indexed
+    doc_num = fid
+    print("total documents indexed: ", str(doc_num))        # write out to an output file
+    # number of unique words
+    print("total number of unique words", str(numWords))    # write out to an output file
+    # merge files
+    if os.path.exists('indexes'):
+        files = [f for f in os.listdir('indexes')]
+    for i in range(1, iid):
+        mergeFiles(files[0], files[i])
+    # total size could be check on disk
