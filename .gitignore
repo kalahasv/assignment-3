@@ -5,3 +5,5 @@ DEV2/
 indexes/*.json
 .DS_Store
 **/.DS_Store
+__pycache__/
+report.txt
