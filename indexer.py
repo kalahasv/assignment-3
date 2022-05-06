@@ -1,12 +1,14 @@
 from os.path import splitext
 from urllib.parse import urlparse
 from nltk.tokenize import TweetTokenizer
+from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
 from bs4 import BeautifulSoup
 import nltk
 import re
 import os
 import json
+from json_merger import mergeFiles
 
 # BASE structure for inverted index, can add more attributes:
 # {
@@ -17,6 +19,7 @@ import json
 # }
 # Can maybe add an "importance" value based on what document it is retrieved from
 # Might want to break index into chunks so memory does not get depleted; merge all indexes together in the end
+
 
 if __name__ == "__main__":
     # Debug variable for debug output
@@ -37,6 +40,9 @@ if __name__ == "__main__":
     # Remove all contents in the indexes folder for each fresh run
     for f in os.listdir('indexes'):
         os.remove(os.path.join('indexes', f))
+
+    # tracking total number of unique words
+    numWords = 0
     
     for root, dirs, files in os.walk(docPath):
         dirs.sort() #sort dirs so they are in the same order every time
@@ -48,12 +54,16 @@ if __name__ == "__main__":
             if(extension != '.txt' and extension != '.php'): #Note: Unclear whether the "parse html" part of the assignment means the content rather than the website type -Vik
                 test_file_contents = data["content"]
                 raw_text = BeautifulSoup(test_file_contents, 'lxml').get_text()
-                tokenizer = TweetTokenizer()
-                tokens = tokenizer.tokenize(raw_text)
+
+                #tokenizer = TweetTokenizer()
+                tokens = word_tokenize(raw_text)
+
                 # Experimental Porter Stemmer
                 ps = PorterStemmer()
                 
-                clean_tokens = [ps.stem(t) for t in tokens if not re.match(r'[^a-zA-Z\d\s]', t)]
+                #clean_tokens = [ps.stem(t) for t in tokens if not re.match(r'[^a-zA-Z\d\s]', t)]    # does not remove special characters
+                #clean_tokens = [ps.stem(t) for t in tokens if re.match(r'[a-z0-9A-Z]+', t)]
+                clean_tokens = [ps.stem(t) for t in tokens if t.isalnum()]
                 # Update the inverted index with the tokens
                 for t in clean_tokens:
                     # Can probably use defaultdict to skip conditional checks?
@@ -76,24 +86,31 @@ if __name__ == "__main__":
                         json.dump(index, save_file)
                     # Increment index id after dumping one index file
                     iid += 1
+                    numWords += len(index)
                     # Clearing the dictionary should certainly clear the memory, right? y
                     index.clear()
                 # Increment file id after current file is done
                 fid += 1
     # The last batch might not reach (splitter #) files, so if the index is not empty, dump another file
     if len(index) != 0:
+        numWords += len(index)
         with open("indexes/index" + str(iid) + ".json", "w") as save_file:
             json.dump(index, save_file)
-            
-    # report - Ju
-    # number of documents indexed
-    doc_num = fid
-    print("total documents indexed: ", str(doc_num))        # write out to an output file
-    # number of unique words
-    print("total number of unique words", str(numWords))    # write out to an output file
+    
+
     # merge files
     if os.path.exists('indexes'):
         files = [f for f in os.listdir('indexes')]
     for i in range(1, iid):
         mergeFiles(files[0], files[i])
-    # total size could be check on disk
+
+
+    # writing report file
+    # report 1 
+    numDoc = fid
+    with open("report.txt", "w") as outfile:
+        outfile.write(f"Number of indexed documents:  {str(numDoc)}\n\n")
+    # report 2
+        outfile.write(f"Number of unique words: {str(numWords)}\n\n")
+    # report 3
+    # total size (in KB) of index on disk (add later)
