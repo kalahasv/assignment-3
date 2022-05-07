@@ -42,7 +42,7 @@ if __name__ == "__main__":
         os.remove(os.path.join('indexes', f))
 
     # tracking total number of unique words
-    numWords = 0
+    #numWords = 0
     
     for root, dirs, files in os.walk(docPath):
         dirs.sort() #sort dirs so they are in the same order every time
@@ -64,6 +64,7 @@ if __name__ == "__main__":
                 #clean_tokens = [ps.stem(t) for t in tokens if not re.match(r'[^a-zA-Z\d\s]', t)]    # does not remove special characters
                 #clean_tokens = [ps.stem(t) for t in tokens if re.match(r'[a-z0-9A-Z]+', t)]
                 clean_tokens = [ps.stem(t) for t in tokens if t.isalnum()]
+                clean_tokens.sort()
                 # Update the inverted index with the tokens
                 for t in clean_tokens:
                     # Can probably use defaultdict to skip conditional checks?
@@ -86,14 +87,14 @@ if __name__ == "__main__":
                         json.dump(index, save_file)
                     # Increment index id after dumping one index file
                     iid += 1
-                    numWords += len(index)
+                    #numWords += len(index)
                     # Clearing the dictionary should certainly clear the memory, right? y
                     index.clear()
                 # Increment file id after current file is done
                 fid += 1
     # The last batch might not reach (splitter #) files, so if the index is not empty, dump another file
     if len(index) != 0:
-        numWords += len(index)
+        #numWords += len(index)
         with open("indexes/index" + str(iid) + ".json", "w") as save_file:
             json.dump(index, save_file)
     
@@ -110,7 +111,10 @@ if __name__ == "__main__":
     numDoc = fid
     with open("report.txt", "w") as outfile:
         outfile.write(f"Number of indexed documents:  {str(numDoc)}\n\n")
+    
     # report 2
-        outfile.write(f"Number of unique words: {str(numWords)}\n\n")
+        with open(os.path.join("indexes","index1.json")) as f:    
+            index = json.load(f)
+            outfile.write(f"Number of unique words:  {str(len(index))}\n\n")
     # report 3
     # total size (in KB) of index on disk (add later)
