@@ -17,8 +17,9 @@ def mergeFiles(f1: str, f2: str) -> None:
             # If exists, append locations but make sure not to duplicate
             for i in v["locations"]:
                 if i not in data2[k]["locations"]:
-                    data2[k]["locations"].append(i)
-                data2[k]["frequency"] += data1[k]["frequency"]
+                    data2[k]["locations"][i] = 0 
+
+                data2[k]["locations"][i] += data1[k]["locations"][i]
     # Save the data to file 1
     with open(os.path.join("indexes",f1), "w") as f:
         json.dump(data2, f)

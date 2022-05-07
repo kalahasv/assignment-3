@@ -9,6 +9,8 @@ import re
 import os
 import json
 from json_merger import mergeFiles
+from pprint import pprint
+
 
 # BASE structure for inverted index, can add more attributes:
 # {
@@ -26,13 +28,16 @@ if __name__ == "__main__":
     IS_DEBUG = True
     # Define path
     docPath = "DEV"
-    # Initialize the index
-    index = dict()
+    # Initialize the index dictionary
+    index = {} 
+   
+    
     # File "id"
     fid = 1
     # Index id for splitting
     iid = 1
     # How many files to traverse before splitting that index
+    #10000
     splitter = 10000
     # Create the indexes folder if not exists
     if not os.path.exists('indexes'):
@@ -55,8 +60,8 @@ if __name__ == "__main__":
                 test_file_contents = data["content"]
                 raw_text = BeautifulSoup(test_file_contents, 'lxml').get_text()
 
-                #tokenizer = TweetTokenizer()
-                tokens = word_tokenize(raw_text)
+                ttokenizer = TweetTokenizer()
+                tokens = ttokenizer.tokenize(raw_text)
 
                 # Experimental Porter Stemmer
                 ps = PorterStemmer()
@@ -70,14 +75,22 @@ if __name__ == "__main__":
                     # Can probably use defaultdict to skip conditional checks?
                     if t in index:
                         # Sets are not allowed in JSON syntax so we use a list but check for duplicate elements
+                        #Update: Changed  the structure to {word:{doc_id:freq}} 
                         if fid not in index[t]["locations"]:
-                            index[t]["locations"].append(fid)
-                        index[t]["frequency"] += 1
+                            index[t]["locations"][fid] = 1
+                        else:
+                            index[t]["locations"][fid] += 1
+                        #index[t]["frequency"] += 1
                     else:
+                        
                         index[t] = {
-                            "locations": [fid],
-                            "frequency": 1
+                            "locations": {fid: 1}
                         }
+                    
+                        
+                if IS_DEBUG:
+                    pass
+                    #    pprint(index)
                 # Split so memory doesn't deplete fully
               
                 if fid % splitter == 0:
@@ -102,7 +115,7 @@ if __name__ == "__main__":
     # merge files
     if os.path.exists('indexes'):
         files = [f for f in os.listdir('indexes')]
-    for i in range(1, iid):
+    for i in range(1, iid-1):
         mergeFiles(files[0], files[i])
 
 
