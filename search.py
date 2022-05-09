@@ -2,8 +2,21 @@ import os
 import json
 from nltk.stem.porter import *
 
+# intersection function based on the pseudocode from class notes
 def intersection(x: list, y: list) -> list:
-    pass
+    answer = list()
+    cur_x_index = 0
+    cur_y_index = 0
+    while cur_x_index < len(x) and cur_y_index < len(y):
+        if x[cur_x_index] == y[cur_y_index]:
+            answer.append(x[cur_x_index])
+            cur_x_index += 1
+            cur_y_index += 1
+        elif x[cur_x_index] < y[cur_y_index]:
+            cur_x_index += 1
+        else:
+            cur_y_index += 1
+    return answer
 
 # Steps:
 # 1. Search for EACH search term from the inverted index
@@ -29,6 +42,9 @@ if __name__ == "__main__":
 
     # run the intersection function if more than one query word
     if len(docs) > 1:
-        pass
+        while len(docs) > 1:
+            same = intersection(docs.pop(), docs.pop())
+            docs.append(same)
+        print(docs[0])
     else:
         print(docs[0])
