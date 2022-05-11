@@ -115,7 +115,7 @@ if __name__ == "__main__":
     # merge files
     if os.path.exists('indexes'):
         files = [f for f in os.listdir('indexes')]
-    for i in range(1, iid-1):
+    for i in range(1, iid):
         mergeFiles(files[0], files[i])
 
 
