@@ -35,10 +35,16 @@ if __name__ == "__main__":
     docs = list()
     stemmer = PorterStemmer()
     # For each individual word, find the entry in the index, should implement boolean logic here too.
+    
     for query in queries:
         stemmed = stemmer.stem(query)
+        if query in index: #if the search is valid 
+            
         # Append this query word's locations to the big list of documents
-        docs.append(list(index[stemmed]['locations'].keys()))
+             docs.append(list(index[stemmed]['locations'].keys()))
+        else:
+            print("This query is not found in the search index") #quit if the query isn't in the index
+            quit()
 
     # run the intersection function if more than one query word
     if len(docs) > 1:
