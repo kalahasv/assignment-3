@@ -38,7 +38,7 @@ if __name__ == "__main__":
     for query in queries:
         stemmed = stemmer.stem(query)
         # Append this query word's locations to the big list of documents
-        docs.append(index[stemmed]['locations'])
+        docs.append(list(index[stemmed]['locations'].keys()))
 
     # run the intersection function if more than one query word
     if len(docs) > 1:
