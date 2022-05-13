@@ -27,7 +27,7 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "DEV_TEST"
+    docPath = "DEV"
     # Initialize the index dictionary
     index = {} 
    

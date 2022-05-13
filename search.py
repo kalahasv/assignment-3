@@ -79,10 +79,13 @@ if __name__ == "__main__":
     # For each individual word, find the entry in the index, should implement boolean logic here too.
     
     for query in queries:
-        docs = [[]] # [ [key,value] ]
-        #print("Current query: ",query)
+        docs = [] # [ [key,value] ]
+       # print("Current query: ",query)
         stemmed = stemmer.stem(query)
-        if query in index: #if the search is valid 
+        #print("Current query, stemmed: ",stemmed)
+        #pprint(index.keys())
+
+        if stemmed in index: #if the search is valid 
             
         # Append this query word's locations to the big list of documents
              for k in index[stemmed]['locations']:
@@ -90,7 +93,7 @@ if __name__ == "__main__":
                 docs.append([k,index[stemmed]['locations'][k]]) 
 
              docs_list.append(docs)
-             docs.pop(0)
+             
                         
         else:
             print("This query is not found in the search index") #quit if the query isn't in the index
@@ -123,15 +126,15 @@ if __name__ == "__main__":
 
     #find the urls of the list of docs 
 
-    docPath ="DEV_TEST"
+    docPath ="DEV"
     urls_w_freq = find_urls(docPath,sorted_docs_list) #returns the format [url,frequency]
     urls_w_freq = sorted(urls_w_freq, key = lambda x: x[1], reverse = True)
 
     urls_wo_freq = []
     for url in urls_w_freq:
-        pprint(url[0])
+       # pprint(url[0])
         urls_wo_freq.append(url[0])
 
-    #pprint(urls_wo_freq)
+    pprint(urls_wo_freq)
     
    
