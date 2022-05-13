@@ -7,15 +7,20 @@ from pprint import pprint
 
 # intersection function based on the pseudocode from class notes
 def intersection(x: list, y: list) -> list:
+    #print(x)
+    #print(y)
     answer = list()
     cur_x_index = 0
     cur_y_index = 0
+
     while cur_x_index < len(x) and cur_y_index < len(y):
-        if x[cur_x_index] == y[cur_y_index]:
-            answer.append(x[cur_x_index])
+       
+        if x[cur_x_index][0] == y[cur_y_index][0]:
+            total_freq = x[cur_x_index][1] + y[cur_y_index][1]
+            answer.append([x[cur_x_index][0],total_freq])
             cur_x_index += 1
             cur_y_index += 1
-        elif x[cur_x_index] < y[cur_y_index]:
+        elif x[cur_x_index][0] < y[cur_y_index][0]:
             cur_x_index += 1
         else:
             cur_y_index += 1
@@ -37,17 +42,21 @@ def find_urls(docPath,index_list) -> list: #returns a list of urls associated wi
             if(extension != '.txt' and extension != '.php'):
                 #print("Hi we're here at the file")
                 #print(counter)
-                #print("Index list:",index_list[0])
-                if str(counter) in index_list[0]:
+                #print("Index list:",index_list)
+
+                for value in index_list:
+                   # print("Value: ", value)
+                    if str(counter) == value[0]:
                    #print("counter was found in url")
-                   urls.append(data["url"])
+                         urls.append([data["url"],value[1]])
                    
                 
                 counter+=1
-            if(len(urls) == len(index_list[0])):
-                pprint(urls)
+           
+            if(len(urls) == len(index_list)):
+                #pprint(urls)
                 return urls
-    pprint(urls)
+    #pprint(urls)
     return urls
 
 # Steps:
@@ -64,33 +73,65 @@ if __name__ == "__main__":
     # Array containing each word of the query
     queries = list(input("Search Query: ").split())
 
-    docs = list()
+    
+    docs_list = []
     stemmer = PorterStemmer()
     # For each individual word, find the entry in the index, should implement boolean logic here too.
     
     for query in queries:
+        docs = [[]] # [ [key,value] ]
+        #print("Current query: ",query)
         stemmed = stemmer.stem(query)
         if query in index: #if the search is valid 
             
         # Append this query word's locations to the big list of documents
-             docs.append(list(index[stemmed]['locations'].keys()))
+             for k in index[stemmed]['locations']:
+                #print("Key: ", k ,  "Value: " ,index[stemmed]['locations'][k])
+                docs.append([k,index[stemmed]['locations'][k]]) 
+
+             docs_list.append(docs)
+             docs.pop(0)
+                        
         else:
             print("This query is not found in the search index") #quit if the query isn't in the index
             quit()
-
+    
+    
+    #print(docs_list)
     # run the intersection function if more than one query word
-    if len(docs) > 1:
-        while len(docs) > 1:
-            same = intersection(docs.pop(), docs.pop())
-            docs.append(same)
-        print(docs[0]) #note: remove later
-    else:
-        print(docs[0]) #note: remove later
+    #print(len(docs_list))
+    if len(docs_list) > 1:
+        while len(docs_list) > 1:
+            #print("Greater than 1")
+            same = intersection(docs_list.pop(), docs_list.pop())
+            docs_list.append(same)
+
+        
+    
 
 
+    #filter out so we're only getting the urls of the top 5
+    sorted_docs_list = sorted(docs_list[0], key=lambda x : x[1], reverse=True)
+   # print(sorted_docs_list)
+    sorted_docs_list = sorted_docs_list[0:5]
+    sorted_docs_list = sorted(sorted_docs_list, key = lambda x: x,reverse= False ) #getting them in key order for easy url retreival
+    #print(sorted_docs_list)
+
+
+    #urls = []
+    #for item in sorted_docs_list:
 
     #find the urls of the list of docs 
+
     docPath ="DEV_TEST"
-    urls = find_urls(docPath,docs)
+    urls_w_freq = find_urls(docPath,sorted_docs_list) #returns the format [url,frequency]
+    urls_w_freq = sorted(urls_w_freq, key = lambda x: x[1], reverse = True)
+
+    urls_wo_freq = []
+    for url in urls_w_freq:
+        pprint(url[0])
+        urls_wo_freq.append(url[0])
+
+    #pprint(urls_wo_freq)
     
    
