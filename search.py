@@ -96,13 +96,12 @@ if __name__ == "__main__":
              
                         
         else:
-            print("This query is not found in the search index") #quit if the query isn't in the index
+            print("This query is not found in the search index") # quit if the query isn't in the index
             quit()
     
     
-    #print(docs_list)
+    # doc_list is not sorted hence the accuracy of intersection would be affected
     # run the intersection function if more than one query word
-    #print(len(docs_list))
     if len(docs_list) > 1:
         while len(docs_list) > 1:
             #print("Greater than 1")
