@@ -43,6 +43,8 @@ def find_urls(docPath,index_list) -> list: #returns a list of urls associated wi
                 #print("Hi we're here at the file")
                 #print(counter)
                 #print("Index list:",index_list)
+                
+                # need to remove fragment and check for duplicate urls
 
                 for value in index_list:
                    # print("Value: ", value)
