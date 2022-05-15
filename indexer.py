@@ -11,6 +11,11 @@ import json
 from json_merger import mergeFiles
 from pprint import pprint
 
+try:
+    import mysql.connector
+except:
+    print("MySQL is not installed on this machine")
+
 
 # BASE structure for inverted index, can add more attributes:
 # {
