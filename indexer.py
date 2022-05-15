@@ -10,6 +10,7 @@ import os
 import json
 from json_merger import mergeFiles
 from pprint import pprint
+import importlib
 
 try:
     import mysql.connector
@@ -29,6 +30,18 @@ except:
 
 
 if __name__ == "__main__":
+    sqlcheck = importlib.util.find_spec("mysql.connector")
+    # Define MySQL connection credentials
+    if sqlcheck:
+        sql = mysql.connector.connect(
+            host="localhost",
+            user="search",
+            password="",
+            database="search_engine"
+        )
+        query = sql.cursor()
+        query.execute("TRUNCATE TABLE terms")
+        sql.commit()
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
@@ -64,7 +77,16 @@ if __name__ == "__main__":
             if(extension != '.txt' and extension != '.php'): #Note: Unclear whether the "parse html" part of the assignment means the content rather than the website type -Vik
                 test_file_contents = data["content"]
                 raw_text = BeautifulSoup(test_file_contents, 'lxml').get_text()
-
+                if sqlcheck:
+                    title = BeautifulSoup(test_file_contents, 'lxml').find("title")
+                    if title != None:
+                        # This implementation minimizes the amount of SQL queries needed and space needed (checking for duplicates and selecting distinct values)
+                        # Can also modify SQL server settings directly to ignore duplicate errors
+                        try:
+                            query.execute("INSERT INTO terms (content) VALUES (%s)", (str(title.string).encode("UTF-8"),))
+                            sql.commit()
+                        except:
+                            pass
                 ttokenizer = TweetTokenizer()
                 tokens = ttokenizer.tokenize(raw_text)
 
@@ -110,6 +132,8 @@ if __name__ == "__main__":
                     index.clear()
                 # Increment file id after current file is done
                 fid += 1
+    if sqlcheck:
+        sql.close()
     # The last batch might not reach (splitter #) files, so if the index is not empty, dump another file
     if len(index) != 0:
         #numWords += len(index)
