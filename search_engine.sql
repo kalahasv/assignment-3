@@ -2,10 +2,10 @@
 -- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: May 15, 2022 at 10:40 PM
--- Server version: 10.6.5-MariaDB
--- PHP Version: 8.0.12
+-- Host: 127.0.0.1
+-- Generation Time: May 16, 2022 at 01:29 AM
+-- Server version: 10.4.21-MariaDB
+-- PHP Version: 8.0.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -30,8 +30,18 @@ USE `search_engine`;
 --
 
 CREATE TABLE `terms` (
-  `content` text NOT NULL
+  `content` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `terms`
+--
+ALTER TABLE `terms`
+  ADD UNIQUE KEY `content` (`content`) USING HASH;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
