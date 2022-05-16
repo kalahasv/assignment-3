@@ -25,7 +25,8 @@ def no_query():
 
 @app.route("/query/<input>")
 def query_db(input):
-    query.execute("SELECT * FROM terms WHERE content LIKE %s LIMIT 5", (input + "%",))
+    input = input.split(" ")
+    query.execute("SELECT * FROM terms WHERE content LIKE %s LIMIT 5", ("%".join(input) + "%",))
     result = query.fetchall()
     sql.commit()
     return jsonify(result)
