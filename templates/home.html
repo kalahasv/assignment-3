@@ -5,10 +5,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Search</title>
+    <!-- LIBS: Bootstrap Version 5.1, JQuery 3.6.0 -->
     <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
-    <!-- JQuery version is 3.6.0 for below -->
     <script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/jquery-ui.min.js') }}"></script>
     <script src="{{ url_for('static',filename='js/bootstrap.bundle.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/pagination.min.js') }}"></script>
+    <!-- Custom ajax implementation -->
+    <script src="{{ url_for('static',filename='js/search.js') }}"></script>
 </head>
 
 <body class="text-center">
@@ -18,14 +22,20 @@
             </div>
             <div class="col-6">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Enter Your Search Query"
+                    <input id="searchbar" list="searchresults" type="text" class="form-control" placeholder="Enter Your Search Query"
                         aria-label="query">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button">Search</button>
                     </div>
+                    <datalist id="searchresults"></datalist>
                 </div>
             </div>
             <div class="col">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div id="searchcontents"></div>
             </div>
         </div>
     </div>
