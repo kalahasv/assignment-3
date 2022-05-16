@@ -5,6 +5,12 @@ from nltk.stem.porter import *
 from urllib.parse import urlparse
 from pprint import pprint
 
+
+INDEX_PATH = 'indexes/index1.json'
+
+with open(INDEX_PATH) as f:
+    index = json.load(f)
+
 # intersection function based on the pseudocode from class notes
 def intersection(x: list, y: list) -> list:
     #print(x)
@@ -67,10 +73,6 @@ def find_urls(docPath,index_list) -> list: #returns a list of urls associated wi
 # 3. Find intersection between the retrieved sets of documents
 
 if __name__ == "__main__":
-    INDEX_PATH = 'indexes/index1.json'
-
-    with open(INDEX_PATH) as f:
-        index = json.load(f)
 
     # Array containing each word of the query
     queries = list(input("Search Query: ").split())
