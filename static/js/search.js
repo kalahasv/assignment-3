@@ -1,3 +1,11 @@
+let facts = [`Every year over one million earthquakes shake the Earth.`,
+`When Krakatoa erupted in 1883, its force was so great it could be heard 4,800 kilometres away in Australia.`,
+`The largest ever hailstone weighed over 1kg and fell in Bangladesh in 1986.`,
+`Every second around 100 lightning bolts strike the Earth.`,
+`Every year lightning kills 1000 people.`,
+`In October 1999 an Iceberg the size of London broke free from the Antarctic ice shelf .`,
+`If you could drive your car straight up you would arrive in space in just over an hour.`,
+`Human tapeworms can grow up to 22.9m.`];
 let searchWord = "";
 // Custom implementation of waiting until the user stops typing before calling a setTimeout event from one of my older projects -Tim
 let delay = (() => {
@@ -23,9 +31,10 @@ function createOption(d) {
     option.value = d;
     document.getElementById("searchresults").appendChild(option);
 }
-
-$(document).ready(() => {
-    $('#searchbar').keyup(() => {
+// Some JQuery functions do not work with ES6 syntax for some reason
+$(document).ready(function () {
+    document.getElementById("dailyfacts").innerHTML = facts[Math.floor(Math.random() * (facts.length - 0) + 0)];
+    $('#searchbar').keyup(function () {
         let inputText = $(this).val();
         delay(() => {
             searchWord = inputText;

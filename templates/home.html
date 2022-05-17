@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Search</title>
+    <title>Million Searches Per Second</title>
     <!-- LIBS: Bootstrap Version 5.1, JQuery 3.6.0 -->
     <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
@@ -16,14 +16,29 @@
 </head>
 
 <body class="text-center">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand">MSPS</a>
+            <a class="navbar-text" href="/login">Login</a>
+        </div>
+    </nav>
     <div class="container">
         <div class="row">
             <div class="col">
             </div>
             <div class="col-6">
+                <img src="{{ url_for('static',filename='img/turdlogo.png') }}" style="max-width:100%" />
+            </div>
+            <div class="col">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-6">
                 <div class="input-group mb-3">
-                    <input id="searchbar" list="searchresults" type="text" class="form-control" placeholder="Enter Your Search Query"
-                        aria-label="query">
+                    <input id="searchbar" list="searchresults" type="text" class="form-control"
+                        placeholder="Enter Your Search Query" aria-label="query">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button">Search</button>
                     </div>
@@ -35,7 +50,10 @@
         </div>
         <div class="row">
             <div class="col">
-                <div id="searchcontents"></div>
+            </div>
+            <div class="col-6" id="dailyfacts">
+            </div>
+            <div class="col">
             </div>
         </div>
     </div>
