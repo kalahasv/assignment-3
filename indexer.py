@@ -30,7 +30,10 @@ except:
 
 
 if __name__ == "__main__":
-    sqlcheck = importlib.util.find_spec("mysql.connector")
+    try:
+        sqlcheck = importlib.util.find_spec("mysql.connector")
+    except:
+        sqlcheck = False
     # Define MySQL connection credentials
     if sqlcheck:
         sql = mysql.connector.connect(
@@ -70,7 +73,7 @@ if __name__ == "__main__":
     for root, dirs, files in os.walk(docPath):
         dirs.sort() #sort dirs so they are in the same order every time
         for page in files:
-            pathMap[fid] = root + files
+            pathMap[fid] = root + page
             with open(os.path.join(root, page)) as json_file:
                 data = json.load(json_file)
             extension = splitext(urlparse(data["url"]).path)[1] #gets the extension 
