@@ -42,4 +42,12 @@ $(document).ready(function () {
         }, 1000);
 
     });
+    $('#searchbutton').click(function () {
+        window.location.replace("/search/" + $("#searchbar").val());
+    });
+    $('#searchbar').keypress(function(e){
+        if(e.which == 13) {
+            $('#searchbutton').click();
+        }
+    });
 });

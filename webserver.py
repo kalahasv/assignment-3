@@ -1,6 +1,6 @@
 from flask import Flask, render_template, jsonify
 import mysql.connector
-
+import search
 
 sql = mysql.connector.connect(
         host="localhost",
@@ -30,6 +30,14 @@ def query_db(input):
     result = query.fetchall()
     sql.commit()
     return jsonify(result)
+
+@app.route("/search/<input>")
+def search_page(input):
+    q = search.buildDocList(input.split(" "))
+    sort = search.getSortedList(q)
+    urls = search.find_urls(sort)
+    return render_template("searchresults.html", data=urls)
+
 
 if __name__ == '__main__':
     app.run()
