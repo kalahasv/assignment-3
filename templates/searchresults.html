@@ -25,7 +25,13 @@
     <div class="container">
         <div class="row">
             <div class="col-8">
-                {{ data }}
+                {% for d in data %}
+                    <div class="row">
+                        <h3><a href="/{{ d[3] }}">{{ d[0] }}</a></h3>
+                        <em>{{ d[2] }}</em>
+                        <p>{{ d[1] }}</p>
+                    </div>
+                {% endfor %}
             </div>
             <div class="col">
             </div>

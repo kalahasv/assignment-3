@@ -36,7 +36,8 @@ def search_page(input):
     q = search.buildDocList(input.split(" "))
     sort = search.getSortedList(q)
     urls = search.find_urls(sort)
-    return render_template("searchresults.html", data=urls)
+    d = search.searchEngineData(urls)
+    return render_template("searchresults.html", data=d)
 
 
 if __name__ == '__main__':

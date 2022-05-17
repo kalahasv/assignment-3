@@ -5,6 +5,7 @@ from nltk.stem.porter import *
 from urllib.parse import urlparse
 from pprint import pprint
 import time
+from bs4 import BeautifulSoup
 
 
 INDEX_PATH = 'indexes/index1.json'
@@ -88,6 +89,18 @@ def getSortedList(l: list) -> list:
     sorted_docs_list = sorted_docs_list[0:5]
     sorted_docs_list = sorted(sorted_docs_list, key = lambda x: x,reverse= False ) #getting them in key order for easy url retreival
     return sorted_docs_list
+
+def searchEngineData(l: list) -> list:
+    d = list()
+    for item in l:
+        with open(item[2]) as f:
+            data = json.load(f)
+        title = str(BeautifulSoup(data["content"], 'lxml').find("title").string)
+        if title == None:
+            title = data["url"]
+        preview = BeautifulSoup(data["content"], 'lxml').get_text()[:250]
+        d.append([title, preview, item[0], item[2]])
+    return d
 
 # Steps:
 # 1. Search for EACH search term from the inverted index
