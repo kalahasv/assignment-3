@@ -4,6 +4,7 @@ from posixpath import splitext
 from nltk.stem.porter import *
 from urllib.parse import urlparse
 from pprint import pprint
+import time
 
 
 INDEX_PATH = 'indexes/index1.json'
@@ -40,7 +41,11 @@ def intersection(x: list, y: list) -> list:
 def find_urls(index_list) -> list: #returns a list of urls associated with the given fids 
     urls = []
     for i in index_list:
-        urls.append(urlpath[i])
+        with open(urlpath[i[0]]) as f:
+            data = json.load(f)
+        extension = splitext(urlparse(data["url"]).path)[1]
+        if extension not in ["txt"]:
+            urls.append([data["url"], i[1], urlpath[i[0]]])
     return urls
 
 # Create the list of documents to find intersections from
@@ -81,8 +86,8 @@ if __name__ == "__main__":
         # Array containing each word of the query
         queries = list(input("Search Query: ").split())
 
-        
-        doc_list = buildDocList(queries)
+        start = time.time()
+        docs_list = buildDocList(queries)
         
         
         # doc_list is not sorted hence the accuracy of intersection would be affected
@@ -102,13 +107,14 @@ if __name__ == "__main__":
     # print(sorted_docs_list)
         sorted_docs_list = sorted_docs_list[0:5]
         sorted_docs_list = sorted(sorted_docs_list, key = lambda x: x,reverse= False ) #getting them in key order for easy url retreival
-        #print(sorted_docs_list)
+        print(sorted_docs_list)
 
 
         #urls = []
         #for item in sorted_docs_list:
 
         urls_w_freq = find_urls(sorted_docs_list) #returns the format [url,frequency]
+        end = time.time()
         urls_w_freq = sorted(urls_w_freq, key = lambda x: x[1], reverse = True)
 
         urls_wo_freq = []
@@ -117,5 +123,6 @@ if __name__ == "__main__":
             urls_wo_freq.append(url[0])
 
         pprint(urls_wo_freq)
+        print("Time elapsed:", end - start)
         
     
