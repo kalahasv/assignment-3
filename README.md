@@ -1,6 +1,8 @@
-1. Install MySQL and dependencies
-2. Import search_engine.sql
-3. Execute the following SQL statement
-# GRANT ALL PRIVILEGES ON search_engine.* to 'search'@'localhost' identified by '';
+# Installation Instructions
+1. Install MySQL >= 8.0 or MariaDB >= 10.0
+2. Install dependencies from requirements.txt
+3. Import search_engine.sql
+4. Execute the following SQL statement
+> GRANT ALL PRIVILEGES ON search_engine.* to 'search'@'localhost' identified by '';
 4. Run indexer.py and wait for completion
 5. Run search.py or webserver.py
