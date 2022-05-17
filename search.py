@@ -54,7 +54,7 @@ def buildDocList(inputs: list) -> list:
     stemmer = PorterStemmer()
     # For each individual word, find the entry in the index, should implement boolean logic here too.
     
-    for query in queries:
+    for query in inputs:
         docs = [] # [ [key,value] ]
     # print("Current query: ",query)
         stemmed = stemmer.stem(query)
@@ -76,6 +76,19 @@ def buildDocList(inputs: list) -> list:
             continue
     return docs_list
 
+def getSortedList(l: list) -> list:
+    if len(l) > 1:
+        while len(l) > 1:
+            #print("Greater than 1")
+            same = intersection(l.pop(), l.pop())
+            l.append(same)
+
+    #filter out so we're only getting the urls of the top 5
+    sorted_docs_list = sorted(l[0], key=lambda x : x[1], reverse=True)
+    sorted_docs_list = sorted_docs_list[0:5]
+    sorted_docs_list = sorted(sorted_docs_list, key = lambda x: x,reverse= False ) #getting them in key order for easy url retreival
+    return sorted_docs_list
+
 # Steps:
 # 1. Search for EACH search term from the inverted index
 # 2. Fetch the documents for each search term
@@ -85,35 +98,15 @@ if __name__ == "__main__":
     while True:
         # Array containing each word of the query
         queries = list(input("Search Query: ").split())
-
+        # The timer begins when the query is beginning to be processed
         start = time.time()
         docs_list = buildDocList(queries)
         
-        
-        # doc_list is not sorted hence the accuracy of intersection would be affected
-        # run the intersection function if more than one query word
-        if len(docs_list) > 1:
-            while len(docs_list) > 1:
-                #print("Greater than 1")
-                same = intersection(docs_list.pop(), docs_list.pop())
-                docs_list.append(same)
-
-            
-        
-
-
         #filter out so we're only getting the urls of the top 5
-        sorted_docs_list = sorted(docs_list[0], key=lambda x : x[1], reverse=True)
-    # print(sorted_docs_list)
-        sorted_docs_list = sorted_docs_list[0:5]
-        sorted_docs_list = sorted(sorted_docs_list, key = lambda x: x,reverse= False ) #getting them in key order for easy url retreival
-        print(sorted_docs_list)
-
-
-        #urls = []
-        #for item in sorted_docs_list:
+        sorted_docs_list = getSortedList(docs_list)
 
         urls_w_freq = find_urls(sorted_docs_list) #returns the format [url,frequency]
+        # The URLs have been found so timer stops
         end = time.time()
         urls_w_freq = sorted(urls_w_freq, key = lambda x: x[1], reverse = True)
 
