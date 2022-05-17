@@ -1,4 +1,5 @@
-# Installation Instructions
+# Million Searches per Second (MSPS not related to MIPS i swear)
+## Installation Instructions
 1. Install MySQL >= 8.0 or MariaDB >= 10.0
 2. Install dependencies from requirements.txt
 3. Import search_engine.sql
