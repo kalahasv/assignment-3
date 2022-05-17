@@ -48,8 +48,8 @@ if __name__ == "__main__":
     docPath = "DEV"
     # Initialize the index dictionary
     index = {} 
-   
-    
+    # Maps doc ids to path
+    pathMap = {}
     # File "id"
     fid = 1
     # Index id for splitting
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     for root, dirs, files in os.walk(docPath):
         dirs.sort() #sort dirs so they are in the same order every time
         for page in files:
-            
+            pathMap[fid] = root + files
             with open(os.path.join(root, page)) as json_file:
                 data = json.load(json_file)
             extension = splitext(urlparse(data["url"]).path)[1] #gets the extension 
@@ -139,8 +139,9 @@ if __name__ == "__main__":
         #numWords += len(index)
         with open("indexes/index" + str(iid) + ".json", "w") as save_file:
             json.dump(index, save_file)
-    
-
+    # save the path map
+    with open("pathmap.json") as f:
+        json.dump(pathMap, f)
     # merge files
     if os.path.exists('indexes'):
         files = [f for f in os.listdir('indexes')]
