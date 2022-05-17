@@ -33,7 +33,7 @@ if __name__ == "__main__":
     try:
         sqlcheck = importlib.util.find_spec("mysql.connector")
     except:
-        sqlcheck = False)
+        sqlcheck = False
     # Define MySQL connection credentials
     if sqlcheck:
         sql = mysql.connector.connect(
