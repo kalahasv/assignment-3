@@ -1,8 +1,9 @@
-from flask import Flask, render_template, jsonify, session, redirect
+from flask import Flask, render_template, jsonify, session, redirect, request
 from flask_session import Session
 import mysql.connector
 import search
 import json
+
 
 sql = mysql.connector.connect(
         host="localhost",
@@ -17,7 +18,6 @@ app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-
 
 @app.errorhandler(404)
 def invalid_path(error):
@@ -37,7 +37,6 @@ def query_db(input):
     input = input.split(" ")
     query.execute("SELECT * FROM terms WHERE content LIKE %s LIMIT 5", ("%".join(input) + "%",))
     result = query.fetchall()
-    sql.commit()
     return jsonify(result)
 
 @app.route("/search/<input>")
@@ -64,6 +63,53 @@ def login():
     if session.get("loggedin"):
         return redirect("/")
     return render_template("login.html")
+
+@app.route("/register", methods=["GET"])
+def register():
+    if session.get("loggedin"):
+        return redirect("/")
+    return render_template("register.html")
+
+@app.route("/login", methods=["POST"])
+def login_auth():
+    if session.get("loggedin"):
+        return 'Already logged in!', 400
+    if request.form.get("email") and request.form.get("password"):
+        query.execute("SELECT * FROM users WHERE email = %s AND password = %s", (request.form.get("email"), request.form.get("password")))
+        result = query.fetchone()
+        if result:
+            session["loggedin"] = True
+            session["uid"] = query.lastrowid
+            session["user"] = request.form.get("email")
+            return 'Success!'
+        else:
+            return 'Invalid credentials!', 401
+    else:
+        return 'Invalid credentials!', 401
+
+@app.route("/register", methods=["POST"])
+def register_auth():
+    if session.get("loggedin"):
+        return 'Already logged in!', 401
+    if request.form.get("email") and request.form.get("password"):
+        query.execute("SELECT * FROM users WHERE email = %s", (request.form.get("email"),))
+        result = query.fetchone()
+        if result:
+            return 'User exists!', 401
+        else:
+            query.execute("INSERT INTO users (email, password) VALUES (%s, %s)", (request.form.get("email"), request.form.get("password")))
+            sql.commit()
+            session["loggedin"] = True
+            session["uid"] = query.lastrowid
+            session["user"] = request.form.get("email")
+            return 'Success!'
+    else:
+        return 'Invalid request!', 401
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    session.clear()
+    return redirect("/")
 
 
 if __name__ == '__main__':
