@@ -3,3 +3,4 @@ lxml
 nltk
 mysql-connector-python
 flask
+flask-session
