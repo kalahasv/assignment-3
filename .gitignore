@@ -7,3 +7,4 @@ indexes/*.json
 **/.DS_Store
 __pycache__/
 report.txt
+flask_session/
