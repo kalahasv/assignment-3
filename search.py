@@ -95,9 +95,11 @@ def searchEngineData(l: list) -> list:
     for item in l:
         with open(item[2]) as f:
             data = json.load(f)
-        title = str(BeautifulSoup(data["content"], 'lxml').find("title").string)
+        title = BeautifulSoup(data["content"], 'lxml').find("title")
         if title == None:
             title = data["url"]
+        else:
+            title = str(title.string)
         preview = BeautifulSoup(data["content"], 'lxml').get_text()[:250]
         d.append([title, preview, item[0], item[2]])
     return d
