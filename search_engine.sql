@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2022 at 01:21 AM
+-- Generation Time: May 19, 2022 at 05:17 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.10
 
@@ -33,7 +33,20 @@ CREATE TABLE `ads` (
   `id` int(11) NOT NULL,
   `title` varchar(50) NOT NULL,
   `content` text NOT NULL,
-  `keywords` varchar(50) NOT NULL
+  `url` varchar(256) NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ads_keywords`
+--
+
+CREATE TABLE `ads_keywords` (
+  `ad_id` int(11) NOT NULL,
+  `word` varchar(50) NOT NULL,
+  `cpc` decimal(8,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -56,7 +69,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `email` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `balance` int(11) NOT NULL DEFAULT 0
+  `balance` decimal(15,2) NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -93,6 +106,12 @@ CREATE TABLE `users_searches` (
 --
 ALTER TABLE `ads`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `ads_keywords`
+--
+ALTER TABLE `ads_keywords`
+  ADD UNIQUE KEY `ad_id` (`ad_id`,`word`);
 
 --
 -- Indexes for table `terms`
