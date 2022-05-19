@@ -10,12 +10,17 @@ from bs4 import BeautifulSoup
 
 INDEX_PATH = 'indexes/index1.json'
 URL_PATH = 'pathmap.json'
+COLLECTION_PATH = 'collection_map.json'
 
 with open(INDEX_PATH) as f:
     index = json.load(f)
 
 with open(URL_PATH) as f:
     urlpath = json.load(f)
+
+with open(COLLECTION_PATH) as f:
+    cpath =  json.load(f)
+
 
 # intersection function based on the pseudocode from class notes
 def intersection(x: list, y: list) -> list:
@@ -73,7 +78,7 @@ def buildDocList(inputs: list) -> list:
             
                         
         else:
-            print("This query is not found in the search index") # quit if the query isn't in the index
+            print("This query is not found in the search index") 
             continue
     return docs_list
 
@@ -110,6 +115,7 @@ def searchEngineData(l: list) -> list:
 # 3. Find intersection between the retrieved sets of documents
 
 if __name__ == "__main__":
+
     while True:
         # Array containing each word of the query
         queries = list(input("Search Query: ").split())

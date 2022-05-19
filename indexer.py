@@ -21,12 +21,19 @@ except:
 # BASE structure for inverted index, can add more attributes:
 # {
 #   "word": {
-#       "locations": [],
-#       "frequency": integer,
+#       "locations": {
+#        doc_id: frequency 
+#        }
 #   }
 # }
 # Can maybe add an "importance" value based on what document it is retrieved from
 # Might want to break index into chunks so memory does not get depleted; merge all indexes together in the end
+
+# Auxilliary Structure for td-idf:
+# {
+#   "word" : collection frequency
+#      
+# }
 
 
 if __name__ == "__main__":
@@ -48,11 +55,13 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "DEV"
+    docPath = "DEV_TEST"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
     pathMap = {}
+    # Maps term to collection freq
+    freqMap = {}
     # File "id"
     fid = 1
     # Index id for splitting
@@ -145,12 +154,22 @@ if __name__ == "__main__":
     # save the path map
     with open("pathmap.json", "w") as f:
         json.dump(pathMap, f)
+
+    #generate collection map
+    #pprint(index)
+    for term in index.keys():      
+            total_term_freq = len(index[term]["locations"])
+            freqMap[term] = total_term_freq
+
+    
+    #save the collection map
+    with open("collection_map.json","w") as f:
+        json.dump(freqMap,f)
     # merge files
     if os.path.exists('indexes'):
         files = [f for f in os.listdir('indexes')]
     for i in range(1, iid):
         mergeFiles(files[0], files[i])
-
 
     # writing report file
     # report 1 
