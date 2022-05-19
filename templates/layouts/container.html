@@ -14,7 +14,11 @@
 </head>
 
 <body>
+    {% if request.path != '/ads' %}
     <div class="container-fluid">
+    {% else %}
+    <div class="container-fluid px-0">
+    {% endif %}
         <div class="row">
             {% include 'navbar.html' %}
         </div>
