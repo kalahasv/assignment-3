@@ -64,6 +64,7 @@ def query_db(input):
     input = input.split(" ")
     query.execute("SELECT * FROM terms WHERE content LIKE %s LIMIT 5", ("%".join(input) + "%",))
     result = query.fetchall()
+    sql.commit()
     return jsonify(result)
 
 @app.route("/search/<input>")
@@ -75,11 +76,13 @@ def search_page(input):
     for word in w:
         query.execute("SELECT * FROM ads_keywords, ads WHERE word = %s AND ads_keywords.ad_id = ads.id ORDER BY cpc DESC", (word,))
         results = query.fetchall()
+        sql.commit()
         if results:
             for result in results:
                 print(result)
                 query.execute("SELECT balance FROM users, ads, ads_keywords WHERE users.id = ads.user_id AND ads.id = ads_keywords.ad_id AND ads_keywords.word = %s LIMIT 1", (result[1],))
                 res = query.fetchone()
+                sql.commit()
                 if res[0] > result[2]:
                     a.append("<span class=\"badge bg-warning text-dark\">Ad</span>" + result[4])
                     a.append(result[5])
