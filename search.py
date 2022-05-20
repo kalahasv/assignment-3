@@ -1,48 +1,23 @@
 import os
 import json
 from posixpath import splitext
-import string
 from nltk.stem.porter import *
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urldefrag
 from pprint import pprint
 import time
 from bs4 import BeautifulSoup
-import math
-import pprint
-from numpy import integer
 
 
 INDEX_PATH = 'indexes/index1.json'
 URL_PATH = 'pathmap.json'
-TF_PATH = 'tf_map.json'
-DF_PATH = 'df_map.json'
+
+URL = 'urlmap.json'
 
 with open(INDEX_PATH) as f:
     index = json.load(f)
 
 with open(URL_PATH) as f:
     urlpath = json.load(f)
-
-with open(DF_PATH) as f:
-    dfMap =  json.load(f)
-
-with open(TF_PATH) as f:
-    tfMap = json.load(f)
-
-# function that returns the td-idf weight of the term 
-# formula: weight = ( 1 + log(tf))*log(N/df)
-
-def findTdidfWeight(term: string,doc: string):  #Note: the profeessor's slide for the formula for td-idf is wrong :/
-   
-    tf = index[term]['locations'][doc]/tfMap[doc]
-    df = dfMap["TOTAL_DOCS"]/dfMap[term]
-    tf_test = math.log(tf,10)
-    df_test = math.log(df,10)
-
-    weight = ( math.log((1 + tf),10))* math.log(df,10)
-    return weight
-
-
 
 # intersection function based on the pseudocode from class notes
 def intersection(x: list, y: list) -> list:
@@ -53,7 +28,6 @@ def intersection(x: list, y: list) -> list:
     cur_y_index = 0
 
     while cur_x_index < len(x) and cur_y_index < len(y):
-       
         if x[cur_x_index][0] == y[cur_y_index][0]:
             total_freq = x[cur_x_index][1] + y[cur_y_index][1]
             answer.append([x[cur_x_index][0],total_freq])
@@ -73,7 +47,7 @@ def find_urls(index_list) -> list: #returns a list of urls associated with the g
             data = json.load(f)
         extension = splitext(urlparse(data["url"]).path)[1]
         if extension not in ["txt"]:
-            urls.append([data["url"], i[1], urlpath[i[0]]])
+            urls.append([urldefrag(data["url"])[0], i[1], urlpath[i[0]]])
     return urls
 
 # Create the list of documents to find intersections from
@@ -90,9 +64,7 @@ def buildDocList(inputs: list) -> list:
         #pprint(index.keys())
 
         if stemmed in index: #if the search is valid 
-            #TEST REMOVE LATER
-            weight = findTdidfWeight(stemmed,"9")
-            print(weight)
+            
         # Append this query word's locations to the big list of documents
             for k in index[stemmed]['locations']:
                 #print("Key: ", k ,  "Value: " ,index[stemmed]['locations'][k])
@@ -102,7 +74,7 @@ def buildDocList(inputs: list) -> list:
             
                         
         else:
-            print("This query is not found in the search index") 
+            print("This query is not found in the search index") # quit if the query isn't in the index
             continue
     return docs_list
 
@@ -112,7 +84,6 @@ def getSortedList(l: list) -> list:
             #print("Greater than 1")
             same = intersection(l.pop(), l.pop())
             l.append(same)
-
     #filter out so we're only getting the urls of the top 5
     sorted_docs_list = sorted(l[0], key=lambda x : x[1], reverse=True)
     sorted_docs_list = sorted_docs_list[0:5]
@@ -139,7 +110,6 @@ def searchEngineData(l: list) -> list:
 # 3. Find intersection between the retrieved sets of documents
 
 if __name__ == "__main__":
-
     while True:
         # Array containing each word of the query
         queries = list(input("Search Query: ").split())
@@ -149,11 +119,13 @@ if __name__ == "__main__":
         
         #filter out so we're only getting the urls of the top 5
         sorted_docs_list = getSortedList(docs_list)
-
+        
         urls_w_freq = find_urls(sorted_docs_list) #returns the format [url,frequency]
         # The URLs have been found so timer stops
         end = time.time()
         urls_w_freq = sorted(urls_w_freq, key = lambda x: x[1], reverse = True)
+        
+        print(urls_w_freq)
 
         urls_wo_freq = []
         for url in urls_w_freq:
@@ -161,6 +133,8 @@ if __name__ == "__main__":
             urls_wo_freq.append(url[0])
 
         pprint(urls_wo_freq)
-        print("Time elapsed:", (end - start) * 1000, "milliseconds")
+        print("Time elapsed:", end - start)
+        
+        break;
         
     
