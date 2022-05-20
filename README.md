@@ -5,7 +5,7 @@
 3. Import search_engine.sql
 4. Execute the following SQL statement
 > CREATE USER 'search'@'localhost' IDENTIFIED BY '';
-> GRANT ALL PRIVILEGES ON search_engine.* to 'search'@'localhost' identified by '';
+> GRANT ALL PRIVILEGES ON search_engine.* to 'search'@'localhost' IDENTIFIED BY '';
 1. Run indexer.py and wait for completion
 2. Run search.py (console) or webserver.py (graphical)
 
