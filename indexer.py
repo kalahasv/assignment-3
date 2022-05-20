@@ -29,11 +29,20 @@ except:
 # Can maybe add an "importance" value based on what document it is retrieved from
 # Might want to break index into chunks so memory does not get depleted; merge all indexes together in the end
 
-# Auxilliary Structure for td-idf:
+# Auxilliary Structure for td-idf: document frequency 
 # {
 #   "word" : collection frequency
 #      
 # }
+
+# Auxilliary Structure for td-idf: terms for each doc
+# {
+#   "doc" : number of terms 
+#      
+# }
+
+
+
 
 
 if __name__ == "__main__":
@@ -55,13 +64,15 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "DEV_TEST"
+    docPath = "DEV"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
     pathMap = {}
     # Maps term to collection freq
-    freqMap = {}
+    dfMap = {}
+    # Maps doc to number of terms it has 
+    tfMap = {}
     # File "id"
     fid = 1
     # Index id for splitting
@@ -109,6 +120,9 @@ if __name__ == "__main__":
                 #clean_tokens = [ps.stem(t) for t in tokens if re.match(r'[a-z0-9A-Z]+', t)]
                 clean_tokens = [ps.stem(t) for t in tokens if t.isalnum()]
                 clean_tokens.sort()
+
+                #add number of terms to tf map
+                tfMap[fid] = len(clean_tokens)
                 # Update the inverted index with the tokens
                 for t in clean_tokens:
                     # Can probably use defaultdict to skip conditional checks?
@@ -159,12 +173,17 @@ if __name__ == "__main__":
     #pprint(index)
     for term in index.keys():      
             total_term_freq = len(index[term]["locations"])
-            freqMap[term] = total_term_freq
+            dfMap[term] = total_term_freq
 
-    
+    dfMap["TOTAL_DOCS"] = fid-1 #probably a better way of doing this 
+
     #save the collection map
-    with open("collection_map.json","w") as f:
-        json.dump(freqMap,f)
+    with open("df_map.json","w") as f:
+        json.dump(dfMap,f)
+
+    with open("tf_map.json","w") as f:
+        json.dump(tfMap,f)
+    
     # merge files
     if os.path.exists('indexes'):
         files = [f for f in os.listdir('indexes')]
@@ -175,7 +194,7 @@ if __name__ == "__main__":
     # report 1 
     numDoc = fid
     with open("report.txt", "w") as outfile:
-        outfile.write(f"Number of indexed documents:  {str(numDoc)}\n\n")
+        outfile.write(f"Number of indexed documents:  {str(numDoc-1)}\n\n")
     
     # report 2
         with open(os.path.join("indexes","index1.json")) as f:    
@@ -184,4 +203,4 @@ if __name__ == "__main__":
     # report 3
     # total size (in KB) of index on disk (add later)
     # q
-    
+

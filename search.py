@@ -1,16 +1,21 @@
 import os
 import json
 from posixpath import splitext
+import string
 from nltk.stem.porter import *
 from urllib.parse import urlparse
 from pprint import pprint
 import time
 from bs4 import BeautifulSoup
+import math
+import pprint
+from numpy import integer
 
 
 INDEX_PATH = 'indexes/index1.json'
 URL_PATH = 'pathmap.json'
-COLLECTION_PATH = 'collection_map.json'
+TF_PATH = 'tf_map.json'
+DF_PATH = 'df_map.json'
 
 with open(INDEX_PATH) as f:
     index = json.load(f)
@@ -18,8 +23,25 @@ with open(INDEX_PATH) as f:
 with open(URL_PATH) as f:
     urlpath = json.load(f)
 
-with open(COLLECTION_PATH) as f:
-    cpath =  json.load(f)
+with open(DF_PATH) as f:
+    dfMap =  json.load(f)
+
+with open(TF_PATH) as f:
+    tfMap = json.load(f)
+
+# function that returns the td-idf weight of the term 
+# formula: weight = ( 1 + log(tf))*log(N/df)
+
+def findTdidfWeight(term: string,doc: string):  #Note: the profeessor's slide for the formula for td-idf is wrong :/
+   
+    tf = index[term]['locations'][doc]/tfMap[doc]
+    df = dfMap["TOTAL_DOCS"]/dfMap[term]
+    tf_test = math.log(tf,10)
+    df_test = math.log(df,10)
+
+    weight = ( math.log((1 + tf),10))* math.log(df,10)
+    return weight
+
 
 
 # intersection function based on the pseudocode from class notes
@@ -68,7 +90,9 @@ def buildDocList(inputs: list) -> list:
         #pprint(index.keys())
 
         if stemmed in index: #if the search is valid 
-            
+            #TEST REMOVE LATER
+            weight = findTdidfWeight(stemmed,"9")
+            print(weight)
         # Append this query word's locations to the big list of documents
             for k in index[stemmed]['locations']:
                 #print("Key: ", k ,  "Value: " ,index[stemmed]['locations'][k])
