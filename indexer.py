@@ -183,3 +183,5 @@ if __name__ == "__main__":
             outfile.write(f"Number of unique words:  {str(len(index))}\n\n")
     # report 3
     # total size (in KB) of index on disk (add later)
+    # q
+    
