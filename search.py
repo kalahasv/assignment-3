@@ -137,6 +137,6 @@ if __name__ == "__main__":
             urls_wo_freq.append(url[0])
 
         pprint(urls_wo_freq)
-        print("Time elapsed:", end - start)
+        print("Time elapsed:", (end - start) * 1000, "milliseconds")
         
     
