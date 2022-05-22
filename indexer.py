@@ -1,5 +1,5 @@
 from os.path import splitext
-from urllib.parse import urlparse, urldefrag
+from urllib.parse import urlparse
 from nltk.tokenize import TweetTokenizer
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
@@ -21,12 +21,19 @@ except:
 # BASE structure for inverted index, can add more attributes:
 # {
 #   "word": {
-#       "locations": [],
-#       "frequency": integer,
+#       "locations": {
+#        doc_id: frequency 
+#        }
 #   }
 # }
 # Can maybe add an "importance" value based on what document it is retrieved from
 # Might want to break index into chunks so memory does not get depleted; merge all indexes together in the end
+
+# Auxilliary Structure for td-idf:
+# {
+#   "word" : collection frequency
+#      
+# }
 
 
 if __name__ == "__main__":
@@ -48,15 +55,13 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "DEV"
+    docPath = "DEV_TEST"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
     pathMap = {}
-    
-    # Maps doc ids to url (doc_id and url must be unique)
-    urlMap = {}
-    
+    # Maps term to collection freq
+    freqMap = {}
     # File "id"
     fid = 1
     # Index id for splitting
@@ -71,30 +76,17 @@ if __name__ == "__main__":
     for f in os.listdir('indexes'):
         os.remove(os.path.join('indexes', f))
 
+    # tracking total number of unique words
+    #numWords = 0
+    
     for root, dirs, files in os.walk(docPath):
         dirs.sort() #sort dirs so they are in the same order every time
         for page in files:
-            
-            #pathMap[fid] = os.path.join(root, page)
-            
-            with open(os.path.join(root, page), encoding = 'utf8') as json_file:
+            pathMap[fid] = os.path.join(root, page)
+            with open(os.path.join(root, page)) as json_file:
                 data = json.load(json_file)
             extension = splitext(urlparse(data["url"]).path)[1] #gets the extension 
             if(extension != '.txt' and extension != '.php'): #Note: Unclear whether the "parse html" part of the assignment means the content rather than the website type -Vik
-                
-                
-                parsed = urlparse(data["url"])
-                clean_url = data["url"]
-                if parsed.fragment != '':
-                    clean_url = urldefrag(data["url"])[0]
-                    #print(clean_url)
-                if clean_url not in urlMap.values():
-                    urlMap[fid] = clean_url;
-                else: 
-                    continue;
-                    
-                pathMap[fid] = os.path.join(root, page)
-                
                 test_file_contents = data["content"]
                 raw_text = BeautifulSoup(test_file_contents, 'lxml').get_text()
                 if sqlcheck:
@@ -112,7 +104,10 @@ if __name__ == "__main__":
 
                 # Experimental Porter Stemmer
                 ps = PorterStemmer()
-                clean_tokens = [ps.stem(t) for t in tokens if t.isalnum() and t.isascii() and t != '']       # ignore non-English alphanumeric character
+                
+                #clean_tokens = [ps.stem(t) for t in tokens if not re.match(r'[^a-zA-Z\d\s]', t)]    # does not remove special characters
+                #clean_tokens = [ps.stem(t) for t in tokens if re.match(r'[a-z0-9A-Z]+', t)]
+                clean_tokens = [ps.stem(t) for t in tokens if t.isalnum()]
                 clean_tokens.sort()
                 # Update the inverted index with the tokens
                 for t in clean_tokens:
@@ -141,12 +136,10 @@ if __name__ == "__main__":
                     if IS_DEBUG:
                         print("Splitting index", iid, "at fid", fid)
                     with open("indexes/index" + str(iid) + ".json", "w") as save_file:
-                        
-                        # must sort the indexes/terms before dumping into disk
-                        
                         json.dump(index, save_file)
                     # Increment index id after dumping one index file
                     iid += 1
+                    #numWords += len(index)
                     # Clearing the dictionary should certainly clear the memory, right? y
                     index.clear()
                 # Increment file id after current file is done
@@ -161,17 +154,38 @@ if __name__ == "__main__":
     # save the path map
     with open("pathmap.json", "w") as f:
         json.dump(pathMap, f)
-        
-    # save the url map
-    with open("urlmap.json", "w") as urlf:
-        json.dump(urlMap, urlf)
-        
+
+    #generate collection map
+    #pprint(index)
+    for term in index.keys():      
+            total_term_freq = len(index[term]["locations"])
+            freqMap[term] = total_term_freq
+
+    
+    #save the collection map
+    with open("collection_map.json","w") as f:
+        json.dump(freqMap,f)
     # merge files
     if os.path.exists('indexes'):
         files = [f for f in os.listdir('indexes')]
     for i in range(1, iid):
         mergeFiles(files[0], files[i])
 
+    # index the index
+    # structure: {word: [offset, length]}
+    index_offsets = {}
+
+    with open(os.path.join("indexes","index1.json")) as f: 
+        index = json.load(f)
+        # Turn the index into a string matching the json file
+        str_index = '{'
+        for key, value in index.items():
+            # gets offset of word using 
+            index_offsets[key] = [len(str_index), 0]
+            str_index += f'"{key}": {value}, '
+            # gets length of word in the index
+            index_offsets[key][1] = len(str_index) - index_offsets[key][0] - 2
+        
 
     # writing report file
     # report 1 
@@ -185,3 +199,5 @@ if __name__ == "__main__":
             outfile.write(f"Number of unique words:  {str(len(index))}\n\n")
     # report 3
     # total size (in KB) of index on disk (add later)
+    # q
+    
