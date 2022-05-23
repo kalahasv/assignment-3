@@ -136,5 +136,3 @@ if __name__ == "__main__":
         print("Time elapsed:", end - start)
         
         break;
-        
-    
