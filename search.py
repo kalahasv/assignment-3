@@ -94,17 +94,22 @@ def buildDocList(inputs: list) -> list:
             #docs_list.append(docs)
         
         if stemmed in word_offsets:
+            # gets position and length of area of inverted index to read
             g.seek(word_offsets[stemmed][0])
             dict_string = g.read(word_offsets[stemmed][1])
-            print(dict_string)
+            # print(dict_string)
+            # Turns the word's section in index to a dict 
             dict_string = ("{" + dict_string + "}")
             word_locations = json.loads(dict_string)
-            print(word_locations)
+            # print(word_locations)
+
+            # {word: {locations: (file_index, num_appearances)}}
             for key, value in word_locations.items():
                 locations = value
                 for key, value in locations.items():
                     file_appearances = value
 
+            # Append this query word's locations to the big list of documents
             for key, value in file_appearances.items():
                 docs.append([key, value])
 
@@ -176,4 +181,4 @@ if __name__ == "__main__":
         pprint(urls_wo_freq)
         print("Time elapsed:", end - start)
         
-        break;
+        #break
