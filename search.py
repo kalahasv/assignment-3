@@ -14,10 +14,31 @@ URL_PATH = 'pathmap.json'
 URL = 'urlmap.json'
 
 with open(INDEX_PATH) as f:
+    g = open(INDEX_PATH)
     index = json.load(f)
 
 with open(URL_PATH) as f:
     urlpath = json.load(f)
+
+
+def index_offsets() -> dict:
+    # index the index
+    # structure: {word: [offset, length]}
+    index_offsets = {}
+
+    # Turn the index into a string matching the json file
+    str_index = '{'
+    for key, value in index.items():
+        # gets offset of word using 
+        index_offsets[key] = [len(str_index), 0]
+        str_index += f'"{key}": {value}, '
+        # gets length of word in the index
+        index_offsets[key][1] = len(str_index) - index_offsets[key][0] - 2
+
+    #print(index)
+    
+    return index_offsets
+
 
 # intersection function based on the pseudocode from class notes
 def intersection(x: list, y: list) -> list:
@@ -63,15 +84,31 @@ def buildDocList(inputs: list) -> list:
         #print("Current query, stemmed: ",stemmed)
         #pprint(index.keys())
 
-        if stemmed in index: #if the search is valid 
+        #if stemmed in index: #if the search is valid 
             
         # Append this query word's locations to the big list of documents
-            for k in index[stemmed]['locations']:
+            #for k in index[stemmed]['locations']:
                 #print("Key: ", k ,  "Value: " ,index[stemmed]['locations'][k])
-                docs.append([k,index[stemmed]['locations'][k]]) 
+                #docs.append([k,index[stemmed]['locations'][k]]) 
+
+            #docs_list.append(docs)
+        
+        if stemmed in word_offsets:
+            g.seek(word_offsets[stemmed][0])
+            dict_string = g.read(word_offsets[stemmed][1])
+            print(dict_string)
+            dict_string = ("{" + dict_string + "}")
+            word_locations = json.loads(dict_string)
+            print(word_locations)
+            for key, value in word_locations.items():
+                locations = value
+                for key, value in locations.items():
+                    file_appearances = value
+
+            for key, value in file_appearances.items():
+                docs.append([key, value])
 
             docs_list.append(docs)
-            
                         
         else:
             print("This query is not found in the search index") # quit if the query isn't in the index
@@ -85,9 +122,12 @@ def getSortedList(l: list) -> list:
             same = intersection(l.pop(), l.pop())
             l.append(same)
     #filter out so we're only getting the urls of the top 5
-    sorted_docs_list = sorted(l[0], key=lambda x : x[1], reverse=True)
-    sorted_docs_list = sorted_docs_list[0:5]
-    sorted_docs_list = sorted(sorted_docs_list, key = lambda x: x,reverse= False ) #getting them in key order for easy url retreival
+    if (len(l) > 0):
+        sorted_docs_list = sorted(l[0], key=lambda x : x[1], reverse=True)
+        sorted_docs_list = sorted_docs_list[0:5]
+        sorted_docs_list = sorted(sorted_docs_list, key = lambda x: x,reverse= False ) #getting them in key order for easy url retreival
+    else:
+        sorted_docs_list = []
     return sorted_docs_list
 
 def searchEngineData(l: list) -> list:
@@ -111,6 +151,7 @@ def searchEngineData(l: list) -> list:
 
 if __name__ == "__main__":
     while True:
+        word_offsets = index_offsets()
         # Array containing each word of the query
         queries = list(input("Search Query: ").split())
         # The timer begins when the query is beginning to be processed

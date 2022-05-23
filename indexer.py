@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "DEV"
+    docPath = "C:/Users/vguan/Documents/Information Retrieval/assignment-3/DEV/aiclub_ics_uci_edu"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
@@ -182,6 +182,7 @@ if __name__ == "__main__":
     # report 2
         with open(os.path.join("indexes","index1.json")) as f:    
             index = json.load(f)
+            print(index)
             outfile.write(f"Number of unique words:  {str(len(index))}\n\n")
     # report 3
     # total size (in KB) of index on disk (add later)
