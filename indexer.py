@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "C:/Users/vguan/Documents/Information Retrieval/assignment-3/DEV/aiclub_ics_uci_edu"
+    docPath = "DEV"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
@@ -89,9 +89,9 @@ if __name__ == "__main__":
                     clean_url = urldefrag(data["url"])[0]
                     #print(clean_url)
                 if clean_url not in urlMap.values():
-                    urlMap[fid] = clean_url;
+                    urlMap[fid] = clean_url
                 else: 
-                    continue;
+                    continue
                     
                 pathMap[fid] = os.path.join(root, page)
                 
@@ -182,7 +182,6 @@ if __name__ == "__main__":
     # report 2
         with open(os.path.join("indexes","index1.json")) as f:    
             index = json.load(f)
-            print(index)
             outfile.write(f"Number of unique words:  {str(len(index))}\n\n")
     # report 3
     # total size (in KB) of index on disk (add later)
