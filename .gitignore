@@ -8,3 +8,4 @@ indexes/*.json
 __pycache__/
 report.txt
 flask_session/
+split_indexes/
