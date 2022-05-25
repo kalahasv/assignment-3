@@ -23,6 +23,7 @@ def splitFile(f1: str) -> None:
         else:
             d["misc"].update({k: v})
     for k,v in d.items():
+        #print(k)
         with open(os.path.join("split_indexes",k + ".json"), "w") as f:
             json.dump(v, f)
 

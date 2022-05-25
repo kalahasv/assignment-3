@@ -6,6 +6,8 @@ from urllib.parse import urlparse, urldefrag
 from pprint import pprint
 import time
 from bs4 import BeautifulSoup
+import json_splitter
+import string
 
 
 INDEX_PATH = 'indexes/index1.json'
@@ -13,32 +15,27 @@ URL_PATH = 'pathmap.json'
 
 URL = 'urlmap.json'
 
-with open(INDEX_PATH) as f:
-    g = open(INDEX_PATH)
-    index = json.load(f)
-
 with open(URL_PATH) as f:
     urlpath = json.load(f)
 
+# opens all the files produced in the splitter
+def open_split_files():
 
-def index_offsets() -> dict:
-    # index the index
-    # structure: {word: [offset, length]}
-    index_offsets = {}
+    json_splitter.splitFile('index1.json')
 
-    # Turn the index into a string matching the json file
-    str_index = '{'
-    for key, value in index.items():
-        # gets offset of word using 
-        index_offsets[key] = [len(str_index), 0]
-        str_index += f'"{key}": {value}, '
-        # gets length of word in the index
-        index_offsets[key][1] = len(str_index) - index_offsets[key][0] - 2
-
-    #print(index)
+    # misc_index is the loaded misc index from splitter
+    global misc_index
+    misc_index = json.load(open(os.path.join("split_indexes", "misc" + ".json")))
     
-    return index_offsets
-
+    # letter_indexes is the list of each letter's loaded index from json
+    global letter_indexes
+    letter_indexes = {}
+    
+    # open the split index for each letter
+    alphabet = list(string.ascii_lowercase)
+    for letter in alphabet:
+        if os.path.exists("split_indexes/" + letter + ".json"):
+            letter_indexes[letter] = json.load(open(os.path.join("split_indexes", letter + ".json")))
 
 # intersection function based on the pseudocode from class notes
 def intersection(x: list, y: list) -> list:
@@ -79,45 +76,33 @@ def buildDocList(inputs: list) -> list:
     
     for query in inputs:
         docs = [] # [ [key,value] ]
-    # print("Current query: ",query)
+        #print("Current query: ",query)
         stemmed = stemmer.stem(query)
         #print("Current query, stemmed: ",stemmed)
         #pprint(index.keys())
 
-        #if stemmed in index: #if the search is valid 
+        first_char = stemmed[0]
+        #print(first_char)
+
+        # If first character in the word is a letter, find associated word in stemmed file
+        if first_char in list(string.ascii_lowercase):
+            stemmed_index = letter_indexes[first_char]
+        # Else, find in the miscellaneous file
+        else:
+            stemmed_index = misc_index
             
-        # Append this query word's locations to the big list of documents
-            #for k in index[stemmed]['locations']:
-                #print("Key: ", k ,  "Value: " ,index[stemmed]['locations'][k])
-                #docs.append([k,index[stemmed]['locations'][k]]) 
-
-            #docs_list.append(docs)
-        
-        if stemmed in word_offsets:
-            # gets position and length of area of inverted index to read
-            g.seek(word_offsets[stemmed][0])
-            dict_string = g.read(word_offsets[stemmed][1])
-            # print(dict_string)
-            # Turns the word's section in index to a dict 
-            dict_string = ("{" + dict_string + "}")
-            word_locations = json.loads(dict_string)
-            # print(word_locations)
-
-            # {word: {locations: (file_index, num_appearances)}}
-            for key, value in word_locations.items():
-                locations = value
-                for key, value in locations.items():
-                    file_appearances = value
-
-            # Append this query word's locations to the big list of documents
-            for key, value in file_appearances.items():
+        # If the word is in the file, find the doc ids and the number of appearances
+        if stemmed in stemmed_index:
+            for key, value in stemmed_index[stemmed]['locations'].items():
                 docs.append([key, value])
+                
+            # Append this query word's locations to the big list of documents
+            docs_list.append(docs)    
 
-            docs_list.append(docs)
-                        
         else:
             print("This query is not found in the search index") # quit if the query isn't in the index
             continue
+        
     return docs_list
 
 def getSortedList(l: list) -> list:
@@ -155,8 +140,10 @@ def searchEngineData(l: list) -> list:
 # 3. Find intersection between the retrieved sets of documents
 
 if __name__ == "__main__":
+    # open all the split files
+    open_split_files()
+
     while True:
-        word_offsets = index_offsets()
         # Array containing each word of the query
         queries = list(input("Search Query: ").split())
         # The timer begins when the query is beginning to be processed
