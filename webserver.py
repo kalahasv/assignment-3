@@ -43,6 +43,8 @@ def get_ads():
         query = sql.cursor()
         query.execute("SELECT balance FROM users WHERE id = %s", (session["uid"],))
         res = query.fetchone()
+        sql.commit()
+        query.close()
         return render_template("createads.html", data=res)
 
 # Adds the ad to the database
