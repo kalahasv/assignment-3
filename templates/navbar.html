@@ -1,6 +1,16 @@
 <nav class="navbar navbar-dark navbar-expand-lg bg-dark mb-4 d-flex flex-row">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/">MSPS</a>
+        <a class="navbar-brand d-none d-sm-block" href="/">MSPS</a>
+        {% if request.path != "/" %}
+        <form class="d-flex">
+            <input id="searchbar" list="searchresults" type="text" class="form-control"
+                placeholder="Enter Your Search Query" aria-label="query">
+            <div class="input-group-append">
+                <button id="searchbutton" class="btn btn-outline-secondary" type="button">Search</button>
+            </div>
+            <datalist id="searchresults"></datalist>
+        </form>
+        {% endif %}
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

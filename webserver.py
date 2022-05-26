@@ -40,7 +40,10 @@ def get_ads():
     if not session.get("loggedin"):
         return redirect("/")
     else:
-        return render_template("createads.html")
+        query = sql.cursor()
+        query.execute("SELECT balance FROM users WHERE id = %s", (session["uid"],))
+        res = query.fetchone()
+        return render_template("createads.html", data=res)
 
 # Adds the ad to the database
 @app.route("/ads", methods=["POST"])
@@ -52,7 +55,6 @@ def create_ads():
             query = sql.cursor()
             query.execute("INSERT INTO ads (title, content, url, user_id) VALUES (%s, %s, %s, %s)", (request.values.get("title"), request.values.get("body"), request.values.get("site"), session["uid"]))
             l = query.lastrowid
-            print(request.values.get("keywords[0][tag]"))
             counter = 0
             while True:
                 if request.values.get("keywords[" + str(counter) + "][tag]") == None:

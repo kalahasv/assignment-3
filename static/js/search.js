@@ -33,7 +33,10 @@ function createOption(d) {
 }
 // Some JQuery functions do not work with ES6 syntax for some reason
 $(document).ready(function () {
-    document.getElementById("dailyfacts").innerHTML = facts[Math.floor(Math.random() * (facts.length - 0) + 0)];
+    if (document.getElementById("dailyfacts")) {
+        document.getElementById("dailyfacts").innerHTML = facts[Math.floor(Math.random() * (facts.length - 0) + 0)];
+    }
+    
     $('#searchbar').keyup(function () {
         let inputText = $(this).val();
         delay(() => {
