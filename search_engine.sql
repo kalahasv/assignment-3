@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2022 at 05:17 AM
+-- Generation Time: May 27, 2022 at 12:14 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.10
 
@@ -46,7 +46,7 @@ CREATE TABLE `ads` (
 CREATE TABLE `ads_keywords` (
   `ad_id` int(11) NOT NULL,
   `word` varchar(50) NOT NULL,
-  `cpc` decimal(8,2) NOT NULL
+  `cpc` decimal(8,2) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -69,7 +69,7 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `email` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `balance` decimal(15,2) NOT NULL DEFAULT 0.00
+  `balance` decimal(15,2) UNSIGNED NOT NULL DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -125,6 +125,18 @@ ALTER TABLE `terms`
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `users_clicks`
+--
+ALTER TABLE `users_clicks`
+  ADD UNIQUE KEY `user_id` (`user_id`,`click`) USING HASH;
+
+--
+-- Indexes for table `users_searches`
+--
+ALTER TABLE `users_searches`
+  ADD UNIQUE KEY `user_id` (`user_id`,`search`) USING HASH;
 
 --
 -- AUTO_INCREMENT for dumped tables
