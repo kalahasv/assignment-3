@@ -131,6 +131,12 @@ def searchEngineData(l: list) -> list:
         d.append([title, preview, item[0], item[2]])
     return d
 
+def searchInit() -> None:
+    alphabet = list(string.ascii_lowercase)
+    for letter in alphabet:
+        letter_indexes[letter] = ""
+    misc_index = ""
+
 # Steps:
 # 1. Search for EACH search term from the inverted index
 # 2. Fetch the documents for each search term
@@ -141,10 +147,7 @@ if __name__ == "__main__":
 
     while True:
         # Create empty split indexes
-        alphabet = list(string.ascii_lowercase)
-        for letter in alphabet:
-            letter_indexes[letter] = ""
-        misc_index = ""
+        searchInit()
             
         # Array containing each word of the query
         queries = list(input("Search Query: ").split())

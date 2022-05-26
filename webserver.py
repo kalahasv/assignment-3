@@ -176,4 +176,5 @@ def logout():
 
 
 if __name__ == '__main__':
+    search.searchInit()
     app.run()
