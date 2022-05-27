@@ -21,12 +21,24 @@ except:
 # BASE structure for inverted index, can add more attributes:
 # {
 #   "word": {
-#       "locations": [],
-#       "frequency": integer,
+#       "locations": {
+#       doc_id: frequency
+#       }
 #   }
 # }
 # Can maybe add an "importance" value based on what document it is retrieved from
 # Might want to break index into chunks so memory does not get depleted; merge all indexes together in the end
+
+#Auxillary Structure for td-idf:
+#{
+#   "word": collection frequency 
+# }
+
+# Auxillary Structure for td-idf: terms for each document
+# {
+#   "doc": number of terms in document 
+# 
+# }
 
 
 if __name__ == "__main__":
@@ -48,12 +60,24 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "DEV"
+    docPath = "DEV_TEST"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
     pathMap = {}
+
+    #TF STRUCTURES
+    #maps document id to total numbers of terms in that document
+
     
+    #IDF STRUCTURES
+
+    #Maps term to collection frequency 
+    dfMap = {}
+    #maps doc to number of terms the doc has 
+    tfMap = {}
+
+    # 
     # Maps doc ids to url (doc_id and url must be unique)
     urlMap = {}
     
@@ -114,6 +138,8 @@ if __name__ == "__main__":
                 ps = PorterStemmer()
                 clean_tokens = [ps.stem(t) for t in tokens if t.isalnum() and t.isascii() and t != '']       # ignore non-English alphanumeric character
                 clean_tokens.sort()
+
+                tfMap[fid] = len(clean_tokens)
                 # Update the inverted index with the tokens
                 for t in clean_tokens:
                     # Can probably use defaultdict to skip conditional checks?
@@ -158,6 +184,21 @@ if __name__ == "__main__":
         #numWords += len(index)
         with open("indexes/index" + str(iid) + ".json", "w") as save_file:
             json.dump(index, save_file)
+
+
+    #generate the collection map{
+    # reminder: term -> number of documents that term appears in 
+    for term in index.keys():
+        total_term_freq = len(index[term]["locations"])
+        dfMap[term] = total_term_freq
+    dfMap["TOTAL_DOCS"] = fid-1 #probably a better way of doing this 
+    #save the collection map
+    with open("df_map.json","w") as f:
+        json.dump(dfMap,f)
+    #save the tf Map
+    with open("tf_map.json","w") as f:
+        json.dump(tfMap,f)
+
     # save the path map
     with open("pathmap.json", "w") as f:
         json.dump(pathMap, f)
@@ -177,7 +218,7 @@ if __name__ == "__main__":
     # report 1 
     numDoc = fid
     with open("report.txt", "w") as outfile:
-        outfile.write(f"Number of indexed documents:  {str(numDoc)}\n\n")
+        outfile.write(f"Number of indexed documents:  {str(numDoc-1)}\n\n")
     
     # report 2
         with open(os.path.join("indexes","index1.json")) as f:    

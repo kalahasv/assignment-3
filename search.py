@@ -8,20 +8,42 @@ import time
 from bs4 import BeautifulSoup
 import json_splitter
 import string
+import math
 
 
 INDEX_PATH = 'indexes/index1.json'
 URL_PATH = 'pathmap.json'
+DF_PATH = 'df_map.json'
+TF_PATH = 'tf_map.json'
 
 URL = 'urlmap.json'
 
 with open(URL_PATH) as f:
     urlpath = json.load(f)
 
+with open(DF_PATH) as f:
+    dfMap = json.load(f)
+
+with open(TF_PATH) as f:
+    tfMap = json.load(f)
+
+
+
 misc_ind = ""
 letter_indexes = {}
 
 
+def findTdidfWeight(term: string, doc: string):
+    #not sure how to load the correct index file here...
+    #placeholder: times the term occurs in the doc
+    placeholder_times = 1
+    tf = placeholder_times/tfMap[doc]
+    idf = dfMap["TOTAL_DOCS"]/dfMap[term]
+
+    
+    weight = (1 + math.log(tf,10)) * (math.log(idf,10))
+
+    return weight
 # intersection function based on the pseudocode from class notes
 def intersection(x: list, y: list) -> list:
     #print(x)
