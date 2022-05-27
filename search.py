@@ -33,16 +33,16 @@ with open(URL) as f:
 misc_ind = ""
 letter_indexes = {}
 
+#term -> term that's being searched for
+#doc -> doc you're searching in 
+#freq -> to get the times the term occurs in the doc
+def findTdidfWeight(term: string, doc: string, freq: int):
 
-def findTdidfWeight(term: string, doc: string):
-    #not sure how to load the correct index file here...
-    #placeholder: times the term occurs in the doc
-    placeholder_times = 1
-    tf = placeholder_times/tfMap[doc]
-    idf = dfMap["TOTAL_DOCS"]/dfMap[term]
+    tf = freq/tfMap[doc]
+    idf = dfMap["TOTAL_DOCS"]/(dfMap[term]+1)
 
     
-    weight = (1 + math.log(tf,10)) * (math.log(idf,10))
+    weight = tf * (math.log(idf,10))
 
     return weight
 # intersection function based on the pseudocode from class notes
@@ -74,12 +74,15 @@ def find_urls(index_list) -> list: #returns a list of urls associated with the g
         extension = splitext(urlparse(data["url"]).path)[1]
         if extension not in ["txt"]:
             urls.append([urldefrag(data["url"])[0], i[1], urlpath[i[0]]])'''
-        urls.append([urlTable[i[0]],i[1]])      # use url lookup table directly
+            
+      #  urls.append([urlTable[i[0]],i[1]])      # use url lookup table directly
+        urls.append(urlTable[i])
     return urls
 
 # Create the list of documents to find intersections from
-def buildDocList(inputs: list) -> list:
+def buildDocDictionary(inputs: list) -> list:
     docs_list = []
+    docs_dict = {}
     stemmer = PorterStemmer()
 
     # makes sure the variables defined in __main__ can be used here 
@@ -113,19 +116,23 @@ def buildDocList(inputs: list) -> list:
             stemmed_index = misc_ind
             
         # If the word is in the file, find the doc ids and the number of appearances
+        
         if stemmed in stemmed_index:
+           docs_dict[stemmed] =  stemmed_index[stemmed]['locations']
+
             
-            for key, value in stemmed_index[stemmed]['locations'].items():
-                docs.append([key, value])
+           # for key, value in stemmed_index[stemmed]['locations'].items():
+            #    docs.append([key, value])
                 
             # Append this query word's locations to the big list of documents
-            docs_list.append(docs)    
+            #docs_list.append(docs)   '''
 
         else:
             print("This query is not found in the search index") # quit if the query isn't in the index
-            continue
-        
-    return docs_list
+            continue 
+    
+    
+    return docs_dict
 
 def getSortedList(l: list) -> list:
     if len(l) > 1:
@@ -178,24 +185,50 @@ if __name__ == "__main__":
         queries = list(input("Search Query: ").split())
         # The timer begins when the query is beginning to be processed
         start = time.time()
-        docs_list = buildDocList(queries)
+
+        docs_dictionary = buildDocDictionary(queries)
         
+        print("Document Dictionary:", docs_dictionary)
         #filter out so we're only getting the urls of the top 5
-        sorted_docs_list = getSortedList(docs_list)
+
+        tdidfDict = {}
+        #Dictionary for holding the td-idf scores of each document, total
+        # { doc: td-idf }
+        #Eventually needs to sort doc-id by value 
+        #then need to grab top 5
+
+        #term at a time query processing 
+        for term in docs_dictionary:
+            #for each term, calculate the partial td-idf in each document it appears in 
+            for k,v in docs_dictionary[term].items():
+                temp_weight = findTdidfWeight(term,k,v)
+                if(k not in tdidfDict):
+                    tdidfDict[k] = temp_weight
+                else:
+                    tdidfDict[k] += temp_weight
+
+        print(tdidfDict)
+        sorted_docs_list = sorted(tdidfDict, key=tdidfDict.get, reverse=True)
+        sorted_docs_list = sorted_docs_list[0:5]
+        print("Sorted Document list:",sorted_docs_list)
+     
         
-        urls_w_freq = find_urls(sorted_docs_list) #returns the format [url,frequency]
+        #sorted_docs_list = getSortedList(docs_dictionary)
+        
+        urls_found = find_urls(sorted_docs_list) #returns the format [url,frequency]
         # The URLs have been found so timer stops
         end = time.time()
-        urls_w_freq = sorted(urls_w_freq, key = lambda x: x[1], reverse = True)
+
+        #urls_w_freq = sorted(urls_w_freq, key = lambda x: x[1], reverse = True)
         
-        print(urls_w_freq)
+        #print(urls_w_freq)
 
-        urls_wo_freq = []
-        for url in urls_w_freq:
+       # urls_wo_freq = []
+        #for url in urls_w_freq:
         # pprint(url[0])
-            urls_wo_freq.append(url[0])
-
-        pprint(urls_wo_freq)
+         #   urls_wo_freq.append(url[0])
+        print(urls_found)
+        #pprint(urls_wo_freq)
         print("Time elapsed:", end - start)
         
         #break
