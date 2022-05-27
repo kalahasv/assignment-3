@@ -105,8 +105,9 @@ def buildDocList(inputs: list) -> list:
         if first_char in list(string.ascii_lowercase):
             #letter_indexes[first_char] = json.load(open(os.path.join("split_indexes", first_char + ".json")))
             if (first_char in letter_indexes) and os.path.exists(os.path.join("split_indexes", first_char + ".json")) and (letter_indexes[first_char] == ""):
+                print(first_char)
                 letter_indexes[first_char] = json.load(open(os.path.join("split_indexes", first_char + ".json")))
-                #print(letter_indexes)
+                print(letter_indexes[first_char])
             stemmed_index = letter_indexes[first_char]
         # Else, find in the miscellaneous file
         else:
@@ -172,10 +173,10 @@ def searchInit() -> None:
 if __name__ == "__main__":
     #open_split_files()
 
-    while True:
-        # Create empty split indexes
-        searchInit()
-            
+    # Create empty split indexes
+    searchInit()
+
+    while True:    
         # Array containing each word of the query
         queries = list(input("Search Query: ").split())
         # The timer begins when the query is beginning to be processed
