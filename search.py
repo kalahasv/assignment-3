@@ -79,6 +79,7 @@ def find_urls(index_list) -> list: #returns a list of urls associated with the g
 
 # Create the list of documents to find intersections from
 def buildDocList(inputs: list) -> list:
+
     docs_list = []
     stemmer = PorterStemmer()
 
@@ -87,7 +88,7 @@ def buildDocList(inputs: list) -> list:
     global misc_ind 
     global letter_indexes
     # For each individual word, find the entry in the index, should implement boolean logic here too.
-    
+
     for query in inputs:
 
         docs = [] # [ [key,value] ]
@@ -103,8 +104,9 @@ def buildDocList(inputs: list) -> list:
         # If first character in the word is a letter, find associated word in stemmed file
         if first_char in list(string.ascii_lowercase):
             #letter_indexes[first_char] = json.load(open(os.path.join("split_indexes", first_char + ".json")))
-            if (first_char in letter_indexes) and os.path.exists(os.path.join("split_indexes", first_char + ".json")):
+            if (first_char in letter_indexes) and os.path.exists(os.path.join("split_indexes", first_char + ".json")) and (letter_indexes[first_char] == ""):
                 letter_indexes[first_char] = json.load(open(os.path.join("split_indexes", first_char + ".json")))
+                #print(letter_indexes)
             stemmed_index = letter_indexes[first_char]
         # Else, find in the miscellaneous file
         else:
