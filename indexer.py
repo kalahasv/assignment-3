@@ -11,6 +11,7 @@ import json
 from json_merger import mergeFiles
 from pprint import pprint
 import importlib
+import json_splitter
 
 try:
     import mysql.connector
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "DEV_TEST"
+    docPath = "C:/Users/vguan/Documents/Information Retrieval/assignment-3/DEV/alderis_ics_uci_edu"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
@@ -213,6 +214,10 @@ if __name__ == "__main__":
     for i in range(1, iid):
         mergeFiles(files[0], files[i])
 
+
+    # splitting files
+    with open(os.path.join("indexes","index1.json")) as f:    
+        json_splitter.splitFile("index1.json")
 
     # writing report file
     # report 1 

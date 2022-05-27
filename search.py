@@ -100,12 +100,13 @@ def buildDocList(inputs: list) -> list:
 
         # If first character in the word is a letter, find associated word in stemmed file
         if first_char in list(string.ascii_lowercase):
-            if (letter_indexes[first_char] == "") and os.path.exists("split_indexes/" + first_char + ".json"):
+            #letter_indexes[first_char] = json.load(open(os.path.join("split_indexes", first_char + ".json")))
+            if (first_char in letter_indexes) and os.path.exists(os.path.join("split_indexes", first_char + ".json")):
                 letter_indexes[first_char] = json.load(open(os.path.join("split_indexes", first_char + ".json")))
             stemmed_index = letter_indexes[first_char]
         # Else, find in the miscellaneous file
         else:
-            if (misc_ind == "") and os.path.exists("split_indexes/" + "misc.json"):
+            if (misc_ind == "") and os.path.exists(os.path.join("split_indexes", "misc.json")):
                 misc_ind = json.load(open(os.path.join("split_indexes", "misc" + ".json")))
             stemmed_index = misc_ind
             
