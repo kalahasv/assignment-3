@@ -80,7 +80,12 @@ def find_urls(index_list) -> list: #returns a list of urls associated with the g
     return urls
 
 # Create the list of documents to find intersections from
+<<<<<<< HEAD
 def buildDocDictionary(inputs: list) -> list:
+=======
+def buildDocList(inputs: list) -> list:
+
+>>>>>>> 09caa4a62c87cdda9f27b3b8d1086c289b1407bd
     docs_list = []
     docs_dict = {}
     stemmer = PorterStemmer()
@@ -90,7 +95,7 @@ def buildDocDictionary(inputs: list) -> list:
     global misc_ind 
     global letter_indexes
     # For each individual word, find the entry in the index, should implement boolean logic here too.
-    
+
     for query in inputs:
 
         docs = [] # [ [key,value] ]
@@ -106,8 +111,10 @@ def buildDocDictionary(inputs: list) -> list:
         # If first character in the word is a letter, find associated word in stemmed file
         if first_char in list(string.ascii_lowercase):
             #letter_indexes[first_char] = json.load(open(os.path.join("split_indexes", first_char + ".json")))
-            if (first_char in letter_indexes) and os.path.exists(os.path.join("split_indexes", first_char + ".json")):
+            if (first_char in letter_indexes) and os.path.exists(os.path.join("split_indexes", first_char + ".json")) and (letter_indexes[first_char] == ""):
+                #print(first_char)
                 letter_indexes[first_char] = json.load(open(os.path.join("split_indexes", first_char + ".json")))
+                #print(letter_indexes[first_char])
             stemmed_index = letter_indexes[first_char]
         # Else, find in the miscellaneous file
         else:
@@ -177,10 +184,10 @@ def searchInit() -> None:
 if __name__ == "__main__":
     #open_split_files()
 
-    while True:
-        # Create empty split indexes
-        searchInit()
-            
+    # Create empty split indexes
+    searchInit()
+
+    while True:    
         # Array containing each word of the query
         queries = list(input("Search Query: ").split())
         # The timer begins when the query is beginning to be processed
