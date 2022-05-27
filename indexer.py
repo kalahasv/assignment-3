@@ -201,8 +201,8 @@ if __name__ == "__main__":
         json.dump(tfMap,f)
 
     # save the path map
-    with open("pathmap.json", "w") as f:
-        json.dump(pathMap, f)
+    '''with open("pathmap.json", "w") as f:
+        json.dump(pathMap, f)'''
         
     # save the url map
     with open("urlmap.json", "w") as urlf:
@@ -220,7 +220,7 @@ if __name__ == "__main__":
         json_splitter.splitFile("index1.json")
 
     # writing report file
-    # report 1 
+    '''# report 1 
     numDoc = fid
     with open("report.txt", "w") as outfile:
         outfile.write(f"Number of indexed documents:  {str(numDoc-1)}\n\n")
@@ -230,5 +230,5 @@ if __name__ == "__main__":
             index = json.load(f)
             outfile.write(f"Number of unique words:  {str(len(index))}\n\n")
     # report 3
-    # total size (in KB) of index on disk (add later)
+    # total size (in KB) of index on disk (add later)'''
     
