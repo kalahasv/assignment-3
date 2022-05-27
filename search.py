@@ -12,14 +12,14 @@ import math
 
 
 INDEX_PATH = 'indexes/index1.json'
-URL_PATH = 'pathmap.json'
+#URL_PATH = 'pathmap.json'
 DF_PATH = 'df_map.json'
 TF_PATH = 'tf_map.json'
 
 URL = 'urlmap.json'
 
-with open(URL_PATH) as f:
-    urlpath = json.load(f)
+'''with open(URL_PATH) as f:
+    urlpath = json.load(f)'''
 
 with open(DF_PATH) as f:
     dfMap = json.load(f)
@@ -27,7 +27,8 @@ with open(DF_PATH) as f:
 with open(TF_PATH) as f:
     tfMap = json.load(f)
 
-
+with open(URL) as f:
+    urlTable = json.load(f)
 
 misc_ind = ""
 letter_indexes = {}
@@ -68,11 +69,12 @@ def intersection(x: list, y: list) -> list:
 def find_urls(index_list) -> list: #returns a list of urls associated with the given fids 
     urls = []
     for i in index_list:
-        with open(urlpath[i[0]]) as f:
+        '''with open(urlpath[i[0]]) as f:
             data = json.load(f)
         extension = splitext(urlparse(data["url"]).path)[1]
         if extension not in ["txt"]:
-            urls.append([urldefrag(data["url"])[0], i[1], urlpath[i[0]]])
+            urls.append([urldefrag(data["url"])[0], i[1], urlpath[i[0]]])'''
+        urls.append([urlTable[i[0]],i[1]])      # use url lookup table directly
     return urls
 
 # Create the list of documents to find intersections from
@@ -129,7 +131,7 @@ def getSortedList(l: list) -> list:
     if len(l) > 1:
         while len(l) > 1:
             #print("Greater than 1")
-            same = intersection(l.pop(), l.pop())
+            same = intersection(l.pop(), l.pop())       # no need to use intersection once implementing td-idf
             l.append(same)
     #filter out so we're only getting the urls of the top 5
     if (len(l) > 0):
