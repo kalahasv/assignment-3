@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "C:/Users/vguan/Documents/Information Retrieval/assignment-3\DEV"
+    docPath = "DEV_TEST"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
