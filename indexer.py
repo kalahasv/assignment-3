@@ -61,11 +61,11 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "DEV_TEST"
+    docPath = "DEV"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
-    pathMap = {}
+    #pathMap = {}
 
     #TF STRUCTURES
     #maps document id to total numbers of terms in that document
@@ -105,7 +105,7 @@ if __name__ == "__main__":
             with open(os.path.join(root, page), encoding = 'utf8') as json_file:
                 data = json.load(json_file)
             extension = splitext(urlparse(data["url"]).path)[1] #gets the extension 
-            if(extension != '.txt' and extension != '.php'): #Note: Unclear whether the "parse html" part of the assignment means the content rather than the website type -Vik
+            if(extension != '.txt' and extension != '.php' and extension != '.bib'): #Note: Unclear whether the "parse html" part of the assignment means the content rather than the website type -Vik
                 
                 
                 parsed = urlparse(data["url"])
@@ -118,7 +118,7 @@ if __name__ == "__main__":
                 else: 
                     continue
                     
-                pathMap[fid] = os.path.join(root, page)
+                '''pathMap[fid] = os.path.join(root, page)'''
                 
                 test_file_contents = data["content"]
                 raw_text = BeautifulSoup(test_file_contents, 'lxml').get_text()
