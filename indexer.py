@@ -122,22 +122,30 @@ if __name__ == "__main__":
                 h5 = BeautifulSoup(test_file_contents, 'lxml').find_all("h5")
                 strong = BeautifulSoup(test_file_contents, 'lxml').find_all("strong")
                 bold = BeautifulSoup(test_file_contents, 'lxml').find_all("bold")
-                for item in title:
-                    raw_text += (" " + item.text) * 5
-                for item in h1:
-                    raw_text += (" " + item.text) * 3
-                for item in h2:
-                    raw_text += (" " + item.text) * 2
-                for item in h3:
-                    raw_text += " " + item.text
-                for item in h4:
-                    raw_text += " " + item.text
-                for item in h5:
-                    raw_text += " " + item.text
-                for item in strong:
-                    raw_text += " " + item.text
-                for item in bold:
-                    raw_text += " " + item.text
+                if title:
+                    for item in title:
+                        raw_text += (" " + item.text) * 5
+                if h1:
+                    for item in h1:
+                        raw_text += (" " + item.text) * 3
+                if h2:
+                    for item in h2:
+                        raw_text += (" " + item.text) * 2
+                if h3:
+                    for item in h3:
+                        raw_text += " " + item.text
+                if h4:
+                    for item in h4:
+                        raw_text += " " + item.text
+                if h5:
+                    for item in h5:
+                        raw_text += " " + item.text
+                if strong:
+                    for item in strong:
+                        raw_text += " " + item.text
+                if bold:
+                    for item in bold:
+                        raw_text += " " + item.text
                 if sqlcheck:
                     if title != None:
                         # This implementation minimizes the amount of SQL queries needed and space needed (checking for duplicates and selecting distinct values)
