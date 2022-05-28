@@ -11,7 +11,7 @@ sql = mysql.connector.connect(
         password="",
         database="search_engine",
         pool_name="sqlPool",
-        pool_size=3
+        pool_size=20
     )
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -106,10 +106,21 @@ def search_page(input):
                     a.append("ad:" + str(result[0]) + ":" + result[1])
                     break
             break
-    q = search.buildDocList(input.split(" "))
+    q = search.buildDocDictionary(input.split(" "))
     if len(q) > 0:
-        sort = search.getSortedList(q)
-        urls = search.find_urls(sort)
+        tdidfDict = {}
+        for term in q:
+            #for each term, calculate the partial td-idf in each document it appears in 
+            for k,v in q[term].items():
+                temp_weight = search.findTdidfWeight(term,k,v)
+                if(k not in tdidfDict):
+                    tdidfDict[k] = temp_weight
+                else:
+                    tdidfDict[k] += temp_weight
+        sort = sorted(tdidfDict, key=tdidfDict.get, reverse=True)
+        sort = sort[0:5]
+        print(sort)
+        urls = search.find_urlsSE(sort)
         d = search.searchEngineData(urls)
         if len(a) > 0:
             d.insert(0, a)
@@ -128,19 +139,19 @@ def search_page(input):
 # Renders the web page by fetching the JSON file associated with it, if its a result, OR if its an ad, redirect the user to the ad page
 @app.route("/render/<path:input>")
 def render_page(input):
-    query = sql.cursor()
     if input[:3] == "ad:":
         frags = input.split(":")
         if len(frags) < 3:
             return 'Badly formatted URL', 400
         try:
+            query = sql.cursor()
             query.execute("SELECT users.id, ads.url, ads_keywords.cpc FROM users,ads,ads_keywords WHERE ads.id = %s AND ads.user_id = users.id AND ads.id = ads_keywords.ad_id AND ads_keywords.word = %s LIMIT 1", (frags[1],frags[2]))
             res = query.fetchone()
             query.execute("UPDATE users SET balance = balance - %s WHERE id = %s", (res[2], res[0]))
             sql.commit()
             # Record ad clicks for potential analytics data
             if session.get("loggedin") == True:
-                query.execute("SELECT * FROM users_clicks WHERE click = %s AND user_id = %s", (input, session["uid"]))
+                query.execute("SELECT * FROM users_clicks WHERE click = %s AND user_id = %s LIMIT 1", (input, session["uid"]))
                 res2 = query.fetchone()
                 if res2:
                     query.execute("UPDATE users_clicks SET count = count + 1 WHERE click = %s AND user_id = %s", (input, session["uid"]))
@@ -151,26 +162,26 @@ def render_page(input):
             query.close()
             return redirect(res[1])
         except:
-            query.close()
             return 'Ad Owner ran out of money', 400
-    try:
-        # Record clicks to manipulate the next time the user enters the same search query
-        if session.get("loggedin") == True:
-            query.execute("SELECT * FROM users_clicks WHERE click = %s AND user_id = %s", (input, session["uid"]))
-            res = query.fetchone()
-            if res:
-                query.execute("UPDATE users_clicks SET count = count + 1 WHERE click = %s AND user_id = %s", (input, session["uid"]))
-                sql.commit()
-            else:
-                query.execute("INSERT INTO users_clicks (user_id, click, count, type) VALUES (%s, %s, 1, 'Result')", (session["uid"], input))
-                sql.commit()
-        with open(input) as f:
-            data = json.load(f)
-        query.close()
-        return data["content"]
-    except:
-        query.close()
-        return "Invalid file path"
+    else:
+        try:
+            query = sql.cursor()
+            # Record clicks to manipulate the next time the user enters the same search query
+            if session.get("loggedin") == True:
+                query.execute("SELECT * FROM users_clicks WHERE click = %s AND user_id = %s LIMIT 1", (input, session["uid"]))
+                res = query.fetchone()
+                if res:
+                    query.execute("UPDATE users_clicks SET count = count + 1 WHERE click = %s AND user_id = %s", (input, session["uid"]))
+                    sql.commit()
+                else:
+                    query.execute("INSERT INTO users_clicks (user_id, click, count, type) VALUES (%s, %s, 1, 'Result')", (session["uid"], input))
+                    sql.commit()
+            query.close()
+            with open(input) as f:
+                data = json.load(f)
+            return data["content"]
+        except:
+            return "Invalid file path"
 
 # Renders the login page
 @app.route("/login", methods=["GET"])

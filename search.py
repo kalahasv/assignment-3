@@ -82,11 +82,11 @@ def find_urls(index_list) -> list: #returns a list of urls associated with the g
 def find_urlsSE(index_list) -> list: #returns a list of urls associated with the given fids 
     urls = []
     for i in index_list:
-        with open(urlpath[i[0]]) as f:
+        with open(urlpath[i]) as f:
             data = json.load(f)
         extension = splitext(urlparse(data["url"]).path)[1]
         if extension not in ["txt"]:
-            urls.append([urldefrag(data["url"])[0], i[1], urlpath[i[0]]])
+            urls.append([urldefrag(data["url"])[0], i, urlpath[i]])
     return urls
 
 # Create the list of documents to find intersections from
@@ -200,7 +200,7 @@ if __name__ == "__main__":
 
         docs_dictionary = buildDocDictionary(queries)
         
-        print("Document Dictionary:", docs_dictionary)
+        #print("Document Dictionary:", docs_dictionary)
         #filter out so we're only getting the urls of the top 5
 
         tdidfDict = {}
@@ -219,7 +219,7 @@ if __name__ == "__main__":
                 else:
                     tdidfDict[k] += temp_weight
 
-        print(tdidfDict)
+        #print(tdidfDict)
         sorted_docs_list = sorted(tdidfDict, key=tdidfDict.get, reverse=True)
         sorted_docs_list = sorted_docs_list[0:5]
         print("Sorted Document list:",sorted_docs_list)
