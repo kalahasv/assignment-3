@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # Debug variable for debug output
     IS_DEBUG = True
     # Define path
-    docPath = "DEV_TEST"
+    docPath = "DEV"
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
@@ -100,7 +100,6 @@ if __name__ == "__main__":
         dirs.sort() #sort dirs so they are in the same order every time
         for page in files:
             
-            #pathMap[fid] = os.path.join(root, page)
             
             with open(os.path.join(root, page), encoding = 'utf8') as json_file:
                 data = json.load(json_file)
@@ -118,7 +117,7 @@ if __name__ == "__main__":
                 else: 
                     continue
                     
-                '''pathMap[fid] = os.path.join(root, page)'''
+                pathMap[fid] = os.path.join(root, page)
                 
                 test_file_contents = data["content"]
                 raw_text = BeautifulSoup(test_file_contents, 'lxml').get_text()
@@ -201,8 +200,8 @@ if __name__ == "__main__":
         json.dump(tfMap,f)
 
     # save the path map
-    '''with open("pathmap.json", "w") as f:
-        json.dump(pathMap, f)'''
+    with open("pathmap.json", "w") as f:
+        json.dump(pathMap, f)
         
     # save the url map
     with open("urlmap.json", "w") as urlf:
