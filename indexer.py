@@ -114,8 +114,31 @@ if __name__ == "__main__":
                 
                 test_file_contents = data["content"]
                 raw_text = BeautifulSoup(test_file_contents, 'lxml').get_text()
+                title = BeautifulSoup(test_file_contents, 'lxml').find("title")
+                h1 = BeautifulSoup(test_file_contents, 'lxml').find_all("h1")
+                h2 = BeautifulSoup(test_file_contents, 'lxml').find_all("h2")
+                h3 = BeautifulSoup(test_file_contents, 'lxml').find_all("h3")
+                h4 = BeautifulSoup(test_file_contents, 'lxml').find_all("h4")
+                h5 = BeautifulSoup(test_file_contents, 'lxml').find_all("h5")
+                strong = BeautifulSoup(test_file_contents, 'lxml').find_all("strong")
+                bold = BeautifulSoup(test_file_contents, 'lxml').find_all("bold")
+                for item in title:
+                    raw_text += (" " + item.text) * 5
+                for item in h1:
+                    raw_text += (" " + item.text) * 3
+                for item in h2:
+                    raw_text += (" " + item.text) * 2
+                for item in h3:
+                    raw_text += " " + item.text
+                for item in h4:
+                    raw_text += " " + item.text
+                for item in h5:
+                    raw_text += " " + item.text
+                for item in strong:
+                    raw_text += " " + item.text
+                for item in bold:
+                    raw_text += " " + item.text
                 if sqlcheck:
-                    title = BeautifulSoup(test_file_contents, 'lxml').find("title")
                     if title != None:
                         # This implementation minimizes the amount of SQL queries needed and space needed (checking for duplicates and selecting distinct values)
                         # Can also modify SQL server settings directly to ignore duplicate errors
