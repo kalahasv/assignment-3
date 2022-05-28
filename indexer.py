@@ -67,18 +67,11 @@ if __name__ == "__main__":
     # Maps doc ids to path
     pathMap = {}
 
-    #TF STRUCTURES
-    #maps document id to total numbers of terms in that document
-
-    
-    #IDF STRUCTURES
-
     #Maps term to collection frequency 
     dfMap = {}
     #maps doc to number of terms the doc has 
-    tfMap = {}
+    #tfMap = {}
 
-    # 
     # Maps doc ids to url (doc_id and url must be unique)
     urlMap = {}
     
@@ -139,7 +132,7 @@ if __name__ == "__main__":
                 clean_tokens = [ps.stem(t) for t in tokens if t.isalnum() and t.isascii() and t != '']       # ignore non-English alphanumeric character
                 clean_tokens.sort()
 
-                tfMap[fid] = len(clean_tokens)
+                #tfMap[fid] = len(clean_tokens)
                 # Update the inverted index with the tokens
                 for t in clean_tokens:
                     # Can probably use defaultdict to skip conditional checks?
@@ -150,7 +143,6 @@ if __name__ == "__main__":
                             index[t]["locations"][fid] = 1
                         else:
                             index[t]["locations"][fid] += 1
-                        #index[t]["frequency"] += 1
                     else:
                         
                         index[t] = {
@@ -192,17 +184,16 @@ if __name__ == "__main__":
         total_term_freq = len(index[term]["locations"])
         dfMap[term] = total_term_freq
     dfMap["TOTAL_DOCS"] = fid-1 #probably a better way of doing this 
+    
     #save the collection map
     with open("df_map.json","w") as f:
         json.dump(dfMap,f)
     #save the tf Map
-    with open("tf_map.json","w") as f:
-        json.dump(tfMap,f)
-
+    '''with open("tf_map.json","w") as f:
+        json.dump(tfMap,f)'''
     # save the path map
     with open("pathmap.json", "w") as f:
         json.dump(pathMap, f)
-        
     # save the url map
     with open("urlmap.json", "w") as urlf:
         json.dump(urlMap, urlf)
@@ -212,8 +203,7 @@ if __name__ == "__main__":
         files = [f for f in os.listdir('indexes')]
     for i in range(1, iid):
         mergeFiles(files[0], files[i])
-
-
+        
     # splitting files
     with open(os.path.join("indexes","index1.json")) as f:    
         json_splitter.splitFile("index1.json")
@@ -230,4 +220,3 @@ if __name__ == "__main__":
             outfile.write(f"Number of unique words:  {str(len(index))}\n\n")
     # report 3
     # total size (in KB) of index on disk (add later)'''
-    
