@@ -79,6 +79,16 @@ def find_urls(index_list) -> list: #returns a list of urls associated with the g
         urls.append(urlTable[i])
     return urls
 
+def find_urlsSE(index_list) -> list: #returns a list of urls associated with the given fids 
+    urls = []
+    for i in index_list:
+        with open(urlpath[i[0]]) as f:
+            data = json.load(f)
+        extension = splitext(urlparse(data["url"]).path)[1]
+        if extension not in ["txt"]:
+            urls.append([urldefrag(data["url"])[0], i[1], urlpath[i[0]]])
+    return urls
+
 # Create the list of documents to find intersections from
 def buildDocDictionary(inputs: list) -> list:
     docs_list = []
