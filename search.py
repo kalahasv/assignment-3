@@ -12,14 +12,14 @@ import math
 
 
 INDEX_PATH = 'indexes/index1.json'
-#URL_PATH = 'pathmap.json'
+URL_PATH = 'pathmap.json'
 DF_PATH = 'df_map.json'
 TF_PATH = 'tf_map.json'
 
 URL = 'urlmap.json'
 
-'''with open(URL_PATH) as f:
-    urlpath = json.load(f)'''
+with open(URL_PATH) as f:
+    urlpath = json.load(f)
 
 with open(DF_PATH) as f:
     dfMap = json.load(f)
