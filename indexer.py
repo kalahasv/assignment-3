@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # Initialize the index dictionary
     index = {} 
     # Maps doc ids to path
-    #pathMap = {}
+    pathMap = {}
 
     #TF STRUCTURES
     #maps document id to total numbers of terms in that document
