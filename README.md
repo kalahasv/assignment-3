@@ -6,8 +6,10 @@
 4. Execute the following SQL statement
 > CREATE USER 'search'@'localhost' IDENTIFIED BY '';
 > GRANT ALL PRIVILEGES ON search_engine.* to 'search'@'localhost' IDENTIFIED BY '';
-1. Run indexer.py and wait for completion
-2. Run search.py (console) or webserver.py (graphical)
+1. Open indexer.py, and in line 64, where it is written DocPath = "DEV",
+   replace "DEV" with a directory of your choosing.
+3. Run indexer.py and wait for completion
+4. Run search.py (console) or webserver.py (graphical)
 
 ## Preview
 
