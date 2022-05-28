@@ -80,12 +80,7 @@ def find_urls(index_list) -> list: #returns a list of urls associated with the g
     return urls
 
 # Create the list of documents to find intersections from
-<<<<<<< HEAD
 def buildDocDictionary(inputs: list) -> list:
-=======
-def buildDocList(inputs: list) -> list:
-
->>>>>>> 09caa4a62c87cdda9f27b3b8d1086c289b1407bd
     docs_list = []
     docs_dict = {}
     stemmer = PorterStemmer()
